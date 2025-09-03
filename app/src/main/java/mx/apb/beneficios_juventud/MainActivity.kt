@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 }
 
 // Prueba Repositorio GitHub
+// SCRUM MASTER
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
