@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Prueba Repositorio GitHub
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
