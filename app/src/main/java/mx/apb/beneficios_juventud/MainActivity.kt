@@ -1,4 +1,4 @@
-package mx.apb.beneficios_juventud.view
+package mx.apb.beneficios_juventud
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
