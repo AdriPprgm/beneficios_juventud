@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import mx.apb.beneficios_juventud.ui.theme.Beneficios_juventudTheme
@@ -41,9 +44,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Prueba Repositorio GitHub
-// SCRUM MASTER
-
+// App principal
 @Composable
 fun Login(modifier: Modifier = Modifier) {
     Box(
@@ -56,10 +57,42 @@ fun Login(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(text = "Iniciar sesión",
-                style = MaterialTheme.typography.headlineMedium)
+            Titulo("Iniciar sesión")
+            CampoCURP()
+            CampoFolio()
         }
     }
+}
+
+@Composable
+fun Titulo(texto: String, modifier: Modifier = Modifier) {
+    Text(text = texto,
+    style = MaterialTheme.typography.headlineMedium)
+}
+
+@Composable
+fun CampoCURP(modifier: Modifier = Modifier) {
+    OutlinedTextField(
+        value = "", // Obtener el valor del VM
+        onValueChange = {}, // Pasar el valor al VM
+        // TODO agregar conexión con el VM en las dos líneas anteriores
+        label = { Text("Correo electrónico o número de celular") },
+        singleLine = true,
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun CampoFolio(modifier: Modifier = Modifier) {
+    OutlinedTextField(
+        value = "", // Obtener el valor del VM
+        onValueChange = {}, // Pasar el valor al VM
+        // TODO agregar conexión con el VM en las dos líneas anteriores
+        label = { Text("Contraseña") },
+        singleLine = true,
+        visualTransformation = PasswordVisualTransformation(),
+        modifier = modifier.fillMaxWidth()
+    )
 }
 
 @Preview(showBackground = true)
