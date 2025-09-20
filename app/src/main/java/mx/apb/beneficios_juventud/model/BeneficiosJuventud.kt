@@ -1,8 +1,19 @@
 package mx.apb.beneficios_juventud.model
 
 /**
- * Toda la lógica de la aplicación
- * @author
+ * Modelo de la aplicación
  */
+
 class BeneficiosJuventud {
+    var correo: String = ""
+        private set
+    var celular: String = ""
+        private set
+    var contrasena: String = "" // Hay que hashear esto
+        private set
+
+    //
+    // fun login()
+
+
 }

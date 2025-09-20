@@ -1,5 +1,7 @@
 package mx.apb.beneficios_juventud.viewmodel
 
 data class EstadoBeneficios(
-    var defaul: Int = 0 // Borrar en cuanto ya tengamos parámetros
+    var contrasena: String = "",
+    var correo: String = "",
+    var celular: String = ""
 )
