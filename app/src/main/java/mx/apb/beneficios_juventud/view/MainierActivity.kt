@@ -60,6 +60,22 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun AppNavHost(beneficiosVM: BeneficiosVM, navController: NavHostController,modifier: Modifier = Modifier) {
+    NavHost(
+        navController = navController,
+        startDestination = Pantalla.RUTA_LOGIN,
+        modifier = modifier.fillMaxSize()
+    ) {
+        composable(Pantalla.RUTA_LOGIN) {
+            Login(beneficiosVM, navController)
+        }
+        composable(Pantalla.RUTA_MENU) {
+            Menu(beneficiosVM, navController)
+        }
+    }
+}
+
 // App principal
 @Composable
 fun Login(beneficiosVM: BeneficiosVM, navController: NavHostController, modifier: Modifier = Modifier) {
@@ -91,22 +107,6 @@ fun Login(beneficiosVM: BeneficiosVM, navController: NavHostController, modifier
     }
 }
 
-@Composable
-fun AppNavHost(beneficiosVM: BeneficiosVM, navController: NavHostController,modifier: Modifier = Modifier) {
-    NavHost(
-        navController = navController,
-        startDestination = Pantalla.RUTA_LOGIN,
-        modifier = modifier.fillMaxSize()
-    ) {
-        composable(Pantalla.RUTA_LOGIN) {
-            Login(beneficiosVM, navController)
-        }
-        composable(Pantalla.RUTA_MENU) {
-            Menu(beneficiosVM, navController)
-        }
-    }
-}
-
 
 @Composable
 fun Titulo(texto: String, modifier: Modifier = Modifier) {
@@ -117,9 +117,8 @@ fun Titulo(texto: String, modifier: Modifier = Modifier) {
 @Composable
 fun CampoIdentificador(valor: String, onCambio: (String) -> Unit) {
     OutlinedTextField(
-        value = valor, // Obtener el valor del VM
+        value = valor, // Obtener el valor del estado (a través del VM)
         onValueChange = onCambio, // Pasar el valor al VM
-        // TODO agregar conexión con el VM en las dos líneas anteriores
         label = { Text("Correo electrónico o número de celular") },
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
@@ -129,9 +128,8 @@ fun CampoIdentificador(valor: String, onCambio: (String) -> Unit) {
 @Composable
 fun CampoContrasena(valor: String, onCambio: (String) -> Unit) {
     OutlinedTextField(
-        value = valor, // Obtener el valor del VM
+        value = valor, // Obtener el valor del estado (a través del VM)
         onValueChange = onCambio, // Pasar el valor al VM
-        // TODO agregar conexión con el VM en las dos líneas anteriores
         label = { Text("Contraseña") },
         singleLine = true,
         visualTransformation = PasswordVisualTransformation(),
