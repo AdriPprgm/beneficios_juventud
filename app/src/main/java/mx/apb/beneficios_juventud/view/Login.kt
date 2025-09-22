@@ -1,5 +1,6 @@
 package mx.apb.beneficios_juventud.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,14 +12,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 // App principal
 @Composable
-fun Login(loginClick: () -> Unit, modifier: Modifier = Modifier) {
+fun Login(loginClick: () -> Unit, beneficiosVM: BeneficiosVM, navController: NavHostController, modifier: Modifier = Modifier) {
+    val estado by beneficiosVM.estado.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -31,19 +38,13 @@ fun Login(loginClick: () -> Unit, modifier: Modifier = Modifier) {
         ) {
             Titulo("Iniciar sesión")
             CampoIdentificador(
-                valor = "",
-                onCambio = {})
+                valor = estado.correo,
+                onCambio = { beneficiosVM.actualizarCorreo(it) })
             CampoContrasena(
-                valor = "",
-                onCambio = {})
-            //OlvidasteContrasena()
-            /**
-            Button( // TODO hacer que el botón sí valide el correo/celular y contraseña
-            onClick = { navController.navigate((Pantalla.RUTA_MAPA)) }
-            ) {
-            Text("Ingresar")
-            }
-             */
+                valor = estado.contrasena,
+                onCambio = { beneficiosVM.actualizarContrasena(it) })
+            OlvidasteContrasena(navController)
+            // TODO hacer que el botón sí valide el correo/celular y contraseña
             Button(
                 onClick = loginClick
             ) {
@@ -82,16 +83,15 @@ fun CampoContrasena(valor: String, onCambio: (String) -> Unit) {
         modifier = Modifier.fillMaxWidth()
     )
 }
-/*
+
 @Composable
-fun OlvidasteContrasena(navController: NavController) {
-    ClickableText(
-        text = AnnotatedString("¿Olvidaste tu contraseña?"),
-        onClick = { navController.navigate(Pantalla.RUTA_OLVIDASTE) },
-        style = androidx.compose.ui.text.TextStyle(
-            color = MaterialTheme.colorScheme.primary,
-            textDecoration = TextDecoration.Underline
-        )
+fun OlvidasteContrasena(navController: NavHostController) {
+    Text(
+        text = "¿Olvidaste tu contraseña?",
+        color = Color.Blue,
+        modifier = Modifier.clickable {
+            navController.navigate(Pantalla.RUTA_OLVIDASTE)
+        }
     )
 }
- */
+

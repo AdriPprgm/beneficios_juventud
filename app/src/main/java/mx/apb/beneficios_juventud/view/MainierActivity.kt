@@ -3,6 +3,7 @@ package mx.apb.beneficios_juventud
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
 
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -28,19 +30,21 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.Pantalla
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 
 class MainActivity : ComponentActivity() {
+    private val beneficiosVM: BeneficiosVM by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainScreen() // This will display your navigation + bottom bar
+            MainScreen(beneficiosVM) // This will display your navigation + bottom bar
         }
     }
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(beneficiosVM: BeneficiosVM) {
     val navController = rememberNavController()
     val bottomBarItems = Pantalla.pantallasBottomBar
 
@@ -65,8 +69,13 @@ fun MainScreen() {
                         navController.navigate(Pantalla.RUTA_MAPA) {
                             popUpTo(Pantalla.RUTA_LOGIN) {inclusive = true}
                         }
-                    }
+                    },
+                    beneficiosVM = beneficiosVM,
+                    navController
                 )
+            }
+            composable(Pantalla.RUTA_OLVIDASTE) {
+                ScreenText("Olvidaste") // placeholder
             }
             composable(Pantalla.RUTA_MAPA) { ScreenText("Mapa") }
             composable(Pantalla.RUTA_MENU) { ScreenText("Menu") }
