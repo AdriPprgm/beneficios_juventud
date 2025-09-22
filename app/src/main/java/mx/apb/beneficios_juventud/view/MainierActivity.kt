@@ -3,146 +3,114 @@ package mx.apb.beneficios_juventud
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
+
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import mx.apb.beneficios_juventud.ui.theme.Beneficios_juventudTheme
-import mx.apb.beneficios_juventud.view.Menu
+import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.Pantalla
-import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
-/**
- * La pantalla default va a ser el login, por el momento
- * no valida las credenciales con la base de datos.
- * @author: Israel González Huerta
- */
 
 class MainActivity : ComponentActivity() {
-    // Viewmodel
-    private val viewModel: BeneficiosVM by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            Beneficios_juventudTheme {
-                val navController = rememberNavController()
+            MainScreen() // This will display your navigation + bottom bar
+        }
+    }
+}
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavHost(
-                        viewModel,
-                        navController,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+@Composable
+fun MainScreen() {
+    val navController = rememberNavController()
+    val bottomBarItems = Pantalla.pantallasBottomBar
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    Scaffold(
+        bottomBar = {
+            if (currentRoute in bottomBarItems) {
+                BottomBar(navController, bottomBarItems)
             }
         }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Pantalla.RUTA_LOGIN,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Pantalla.RUTA_LOGIN) {
+                Login(
+                    loginClick = {
+                        navController.navigate(Pantalla.RUTA_MAPA) {
+                            popUpTo(Pantalla.RUTA_LOGIN) {inclusive = true}
+                        }
+                    }
+                )
+            }
+            composable(Pantalla.RUTA_MAPA) { ScreenText("Mapa") }
+            composable(Pantalla.RUTA_MENU) { ScreenText("Menu") }
+            composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
+            composable(Pantalla.RUTA_PERFIL) { ScreenText("Perfil") }
+        }
     }
 }
 
 @Composable
-fun AppNavHost(beneficiosVM: BeneficiosVM, navController: NavHostController,modifier: Modifier = Modifier) {
-    NavHost(
-        navController = navController,
-        startDestination = Pantalla.RUTA_LOGIN,
-        modifier = modifier.fillMaxSize()
-    ) {
-        composable(Pantalla.RUTA_LOGIN) {
-            Login(beneficiosVM, navController)
-        }
-        composable(Pantalla.RUTA_MENU) {
-            Menu(beneficiosVM, navController)
+fun BottomBar(navController: NavHostController, items: List<String>){
+    NavigationBar {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        items.forEach { screen ->
+            val icon = when (screen) {
+                Pantalla.RUTA_MAPA -> Icons.Default.LocationOn
+                Pantalla.RUTA_MENU -> Icons.Default.Menu
+                Pantalla.RUTA_NOTIFICACIONES -> Icons.Default.Notifications
+                Pantalla.RUTA_PERFIL -> Icons.Default.AccountCircle
+                else -> Icons.Default.Menu // No estoy muy segura de qué hace esta línea
+            }
+            NavigationBarItem(
+                icon = { Icon(icon, contentDescription = screen) },
+                label = { Text(screen) },
+                selected = currentRoute == screen,
+                onClick = {
+                    navController.navigate(screen) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
         }
     }
 }
 
-// App principal
 @Composable
-fun Login(beneficiosVM: BeneficiosVM, navController: NavHostController, modifier: Modifier = Modifier) {
-    val estado by beneficiosVM.estado.collectAsState()
+fun ScreenText(name: String) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Titulo("Iniciar sesión")
-            CampoIdentificador(
-                valor = estado.correo,
-                onCambio = { beneficiosVM.actualizarCorreo(it)})
-            CampoContrasena(
-                valor = estado.contrasena,
-                onCambio = {beneficiosVM.actualizarContrasena(it)}
-            )
-            Button(
-                onClick = {navController.navigate((Pantalla.RUTA_MENU)) }
-            ) {
-                Text("Ingresar")
-            }
-        }
+        Text(text = name)
     }
 }
-
-
-@Composable
-fun Titulo(texto: String, modifier: Modifier = Modifier) {
-    Text(text = texto,
-    style = MaterialTheme.typography.headlineMedium)
-}
-
-@Composable
-fun CampoIdentificador(valor: String, onCambio: (String) -> Unit) {
-    OutlinedTextField(
-        value = valor, // Obtener el valor del estado (a través del VM)
-        onValueChange = onCambio, // Pasar el valor al VM
-        label = { Text("Correo electrónico o número de celular") },
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun CampoContrasena(valor: String, onCambio: (String) -> Unit) {
-    OutlinedTextField(
-        value = valor, // Obtener el valor del estado (a través del VM)
-        onValueChange = onCambio, // Pasar el valor al VM
-        label = { Text("Contraseña") },
-        singleLine = true,
-        visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-/**
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Beneficios_juventudTheme {
-        Login()
-    }
-}
-*/
