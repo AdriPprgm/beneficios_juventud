@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginNegocios() {
+    Text("NEGOCIOS")
     Box(
         modifier = Modifier
             .fillMaxSize()

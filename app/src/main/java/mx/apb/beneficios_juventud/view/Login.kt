@@ -4,8 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -45,13 +47,16 @@ fun Login(loginClick: () -> Unit, beneficiosVM: BeneficiosVM, navController: Nav
             CampoContrasena(
                 valor = estado.contrasena,
                 onCambio = { beneficiosVM.actualizarContrasena(it) })
-            OlvidasteContrasena(navController)
-            // TODO hacer que el botón sí valide el correo/celular y contraseña
             Button(
                 onClick = loginClick
             ) {
                 Text("Ingresar")
             }
+            Spacer(modifier = Modifier.height(100.dp))
+            OlvidasteContrasena(navController)
+            // TODO hacer que el botón sí valide el correo/celular y contraseña
+            Spacer(modifier = Modifier.height(30.dp))
+            AccesoNegocio(navController)
         }
     }
 }
@@ -95,5 +100,15 @@ fun OlvidasteContrasena(navController: NavHostController) {
             navController.navigate(Pantalla.RUTA_OLVIDASTE)
         }
     )
+}
+
+@Composable
+fun AccesoNegocio(navController: NavHostController) {
+    Text(text = "¿Eres un negocio?",
+        color = Color.Blue,
+        modifier = Modifier.clickable {
+            navController.navigate(Pantalla.RUTA_LOGIN_NEGOCIOS)
+        })
+
 }
 
