@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
-// App principal
+/**
+ * @author: Israel González Huerta
+ */
 @Composable
 fun Login(loginClick: () -> Unit, beneficiosVM: BeneficiosVM, navController: NavHostController, modifier: Modifier = Modifier) {
     val estado by beneficiosVM.estado.collectAsState()
@@ -38,8 +40,8 @@ fun Login(loginClick: () -> Unit, beneficiosVM: BeneficiosVM, navController: Nav
         ) {
             Titulo("Iniciar sesión")
             CampoIdentificador(
-                valor = estado.correo,
-                onCambio = { beneficiosVM.actualizarCorreo(it) })
+                valor = estado.credencial,
+                onCambio = { beneficiosVM.actualizarCredencial(it) })
             CampoContrasena(
                 valor = estado.contrasena,
                 onCambio = { beneficiosVM.actualizarContrasena(it) })

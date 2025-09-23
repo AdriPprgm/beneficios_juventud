@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MainScreen(beneficiosVM) // This will display your navigation + bottom bar
+            MainScreen(beneficiosVM)
         }
     }
 }
