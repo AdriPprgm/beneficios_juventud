@@ -33,4 +33,9 @@ class BeneficiosVM : ViewModel()
         return _estado.value.contrasena
     }
 
+    // Interfaz para la vista de mapa
+    fun actualizarSolicitudMapa(solicitudIngresada: String) {
+        _estado.value = _estado.value.copy(solicitudMapa = solicitudIngresada)
+    }
+
 }

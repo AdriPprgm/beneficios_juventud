@@ -30,6 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.LoginNegocios
+import mx.apb.beneficios_juventud.view.Mapa
 import mx.apb.beneficios_juventud.view.Pantalla
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
@@ -78,7 +79,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             composable(Pantalla.RUTA_OLVIDASTE) {
                 ScreenText("Olvidaste") // placeholder
             }
-            composable(Pantalla.RUTA_MAPA) { ScreenText("Mapa") }
+            composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
             composable(Pantalla.RUTA_MENU) { ScreenText("Menu") }
             composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
             composable(Pantalla.RUTA_PERFIL) { ScreenText("Perfil") }
