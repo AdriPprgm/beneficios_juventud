@@ -38,6 +38,7 @@ android {
     buildFeatures {
         compose = true
     }
+    //NO SE PORQUE AGREGAR ESTO ARREGLO EL ERROR DE BUILD
     packaging {
         resources {
             excludes += "META-INF/INDEX.LIST"
