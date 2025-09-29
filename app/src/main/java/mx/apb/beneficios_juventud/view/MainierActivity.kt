@@ -72,6 +72,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         navController.navigate(Pantalla.RUTA_MAPA) {
                             popUpTo(Pantalla.RUTA_LOGIN) {inclusive = true}
                         }
+                        beneficiosVM.testLogin()
                     },
                     beneficiosVM = beneficiosVM,
                     navController
