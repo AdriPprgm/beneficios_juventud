@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.LoginNegocios
 import mx.apb.beneficios_juventud.view.Mapa
@@ -53,6 +56,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {
@@ -67,12 +71,25 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Pantalla.RUTA_LOGIN) {
+                /**
+                 * Posiblemente tenemos que cambiar la forma en la cual manejamos
+                 * el login en las pantallas, ademas tenemos que re acomodar las pantallas
+                 * principales, ya que creo que roman quiere la menor cantidad funciones
+                 * en MainActivity
+                 * @author Adrian Proano Bernal
+                 */
                 Login(
                     loginClick = {
-                        navController.navigate(Pantalla.RUTA_MAPA) {
-                            popUpTo(Pantalla.RUTA_LOGIN) {inclusive = true}
+                        scope.launch {
+                            beneficiosVM.testLogin()
+                            if (beneficiosVM.estado.value.loginSuccess) {
+                                navController.navigate(Pantalla.RUTA_MAPA) {
+                                    popUpTo(Pantalla.RUTA_LOGIN) { inclusive = true }
+                                }
+                            } else {
+                                navController.navigate(Pantalla.RUTA_LOGIN)
+                            }
                         }
-                        beneficiosVM.testLogin()
                     },
                     beneficiosVM = beneficiosVM,
                     navController

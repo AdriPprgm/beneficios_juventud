@@ -25,6 +25,7 @@ class BeneficiosVM : ViewModel()
     val estado: StateFlow<EstadoBeneficios> = _estado // No usamos mutable, porque esta variable es pública
     // estado no altera la variable, _estado sí puede alterarlar, pero como es privada solo se puede ver
 
+
     // Interfaz de login
     fun actualizarCredencial(credencialIngresada: String) {
         _estado.value = _estado.value.copy(credencial = credencialIngresada)
@@ -36,7 +37,7 @@ class BeneficiosVM : ViewModel()
         return _estado.value.contrasena
     }
     fun obtenerCredencial(): String {
-        return _estado.value.contrasena
+        return _estado.value.credencial
     }
 
     // Interfaz para la vista de mapa
@@ -44,20 +45,18 @@ class BeneficiosVM : ViewModel()
         _estado.value = _estado.value.copy(solicitudMapa = solicitudIngresada)
     }
 
-    fun testLogin() {
+    suspend fun testLogin() {
         val request = LoginRequest(
-            credencial = "myUser",
-            contrasena = "myPassword"
+            credencial = obtenerCredencial(),
+            contrasena = obtenerContrasena()
         )
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = ClienteApi.service.login(request)
-                Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
-            } catch (e: Exception) {
-                Log.e("API_TEST", "Error: ${e.message}", e)
-            }
+        try {
+            val response = ClienteApi.service.login(request)
+            Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
+            _estado.value = _estado.value.copy(loginSuccess = response.success)
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Error: ${e.message}", e)
+            _estado.value = _estado.value.copy(loginSuccess = false)
         }
     }
-
 }

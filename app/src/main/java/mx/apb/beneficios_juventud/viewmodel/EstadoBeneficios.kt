@@ -5,6 +5,8 @@ data class EstadoBeneficios(
     var contrasena: String = "",
     var credencial: String = "",
 
+    val loginSuccess: Boolean = false,
+
     // Variables para el mapa
     var solicitudMapa: String = ""
 )
