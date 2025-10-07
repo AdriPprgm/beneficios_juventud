@@ -1,5 +1,6 @@
 package mx.apb.beneficios_juventud.viewmodel
 
+import android.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -46,9 +47,9 @@ class BeneficiosVM : ViewModel()
     }
 
     suspend fun testLogin() {
-        val request = LoginRequest(
-            credencial = obtenerCredencial(),
-            contrasena = obtenerContrasena()
+        val request = LoginRequest.create(
+            rawCredencial = obtenerCredencial(),
+            rawContrasena = obtenerContrasena()
         )
         try {
             val response = ClienteApi.service.login(request)
