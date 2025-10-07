@@ -22,14 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.LoginNegocios
@@ -59,6 +57,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
     val scope = rememberCoroutineScope()
 
     Scaffold(
+        containerColor = Color.White,
         bottomBar = {
             if (currentRoute in bottomBarItems) {
                 BottomBar(navController, bottomBarItems)

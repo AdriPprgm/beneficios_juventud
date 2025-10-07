@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 
 /**
  * @author: Israel González Huerta
- * TODO decidir si
+ *
  */
 
 @Composable
