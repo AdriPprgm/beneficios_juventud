@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.LoginNegocios
 import mx.apb.beneficios_juventud.view.Mapa
+import mx.apb.beneficios_juventud.view.Olvidaste
 import mx.apb.beneficios_juventud.view.Pantalla
 import mx.apb.beneficios_juventud.view.Perfil
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
@@ -97,11 +98,15 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             composable(Pantalla.RUTA_OLVIDASTE) {
                 ScreenText("Olvidaste") // placeholder
             }
+            composable(Pantalla.RUTA_OLVIDASTE) {
+                Olvidaste(beneficiosVM, navController)
+
+            }
             composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
             composable(Pantalla.RUTA_MENU) { ScreenText("Menu") }
             composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
             composable(Pantalla.RUTA_PERFIL) { Perfil() }
-            composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios() }
+            composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
         }
     }
 }

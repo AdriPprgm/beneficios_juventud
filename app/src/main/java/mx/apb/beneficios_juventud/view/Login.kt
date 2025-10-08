@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
@@ -41,13 +42,17 @@ fun Login(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White) // ✅ Fondo blanco absoluto
+            .background(Color.White)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(horizontal = 24.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.Top
         ) {
             AsyncImage(
                 model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0SU-5o1tEX9nEWacSjibNe2wy_Dp9TmDhzg&s",
@@ -68,12 +73,12 @@ fun Login(
                 valor = estado.contrasena,
                 onCambio = { beneficiosVM.actualizarContrasena(it) }
             )
-
+            Spacer(modifier = Modifier.height(50.dp))
             Button(onClick = loginClick) {
                 Text("Ingresar")
             }
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             OlvidasteContrasena(navController)
             Spacer(modifier = Modifier.height(30.dp))
             AccesoNegocio(navController)
@@ -83,8 +88,12 @@ fun Login(
 
 @Composable
 fun Titulo(texto: String, modifier: Modifier = Modifier) {
-    Text(text = texto,
-        style = MaterialTheme.typography.headlineMedium)
+    Text(
+        text = texto,
+        style = MaterialTheme.typography.headlineMedium,
+        textAlign = TextAlign.Center,
+        modifier = modifier.fillMaxWidth()
+    )
 }
 
 @Composable
