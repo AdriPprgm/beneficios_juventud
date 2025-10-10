@@ -24,11 +24,6 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 /**
  * @author: Israel González Huerta
- *
- */
-
-/**
- * @author: Israel González Huerta
  */
 @Composable
 fun LoginNegocios(

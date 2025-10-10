@@ -54,6 +54,7 @@ fun Login(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+            // Logo de Atizapán de Zaragoza
             AsyncImage(
                 model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0SU-5o1tEX9nEWacSjibNe2wy_Dp9TmDhzg&s",
                 contentDescription = "Logo beneficios juventud",

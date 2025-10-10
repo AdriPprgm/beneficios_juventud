@@ -14,7 +14,6 @@ sealed class Pantalla (
 )
 {
     companion object {
-        // var listaPantallas = listOf() //Quizás sea útil para el bottom bar
         const val RUTA_LOGIN = "Login"
         const val RUTA_MAPA = "Mapa"
         const val RUTA_MENU = "Menu"
@@ -23,17 +22,15 @@ sealed class Pantalla (
         const val RUTA_OLVIDASTE = "Olvidaste"
         const val RUTA_LOGIN_NEGOCIOS = "LoginNegocios"
         const val RUTA_CATALOGO = "Catalogo"
+
+        // Lista de pantallas que aparecene en el bottom bar
         val pantallasBottomBar = listOf(
             RUTA_MAPA,
             RUTA_MENU,
             RUTA_NOTIFICACIONES,
             RUTA_PERFIL)
     }
-    /**
-     * Eliminar en caso de que no se use
-    private data object PantallaLogin:
-            Pantalla(RUTA_LOGIN, "Login", Icons.Default.AccountBox)
-    */
+    // Objeto para los botones del bottom bar
     private data object PantallaMapa:
         Pantalla(RUTA_MAPA, "Mapa", Icons.Default.LocationOn)
     private data object PantallaMenu:

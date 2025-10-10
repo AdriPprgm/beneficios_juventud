@@ -5,7 +5,7 @@ data class EstadoBeneficios(
     var contrasena: String = "",
     var credencial: String = "",
 
-    val loginSuccess: Boolean = false,
+    var loginSuccess: Boolean = false,
 
     var mensajeError: String = "", // DESPUES AGREGAMOS FUNCIONALIDAD A ESTE VALOR
 

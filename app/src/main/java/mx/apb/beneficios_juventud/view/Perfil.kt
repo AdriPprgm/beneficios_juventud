@@ -30,8 +30,9 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun Perfil(navController: NavHostController,
-    beneficiosVM: BeneficiosVM = viewModel())
+fun Perfil(
+    navController: NavHostController,
+    beneficiosVM: BeneficiosVM)
     {
         val estado by beneficiosVM.estado.collectAsState()
         val vm: PerfilVM = viewModel()
@@ -40,7 +41,7 @@ fun Perfil(navController: NavHostController,
         val vm1: BeneficiosVM = viewModel()
 
 
-    if (!estado.loginSuccess){
+    if (estado.loginSuccess == false){
         navController.navigate(Pantalla.RUTA_LOGIN)
     }
 
@@ -71,14 +72,14 @@ fun Perfil(navController: NavHostController,
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Ocurrió un error: ${(s as EstadoPerfil.Error).mensaje}")
+                    Text("Ocurrió un error: ${s.mensaje}")
                     Spacer(Modifier.height(8.dp))
                     Button(onClick = { vm.reload() }) { Text("Reintentar") }
                 }
             }
 
             is EstadoPerfil.Exito -> {
-                val perfil = (s as EstadoPerfil.Exito).perfil
+                val perfil = s.perfil
                 val historial = s.historial
                 PerfilContent(
                     modifier = Modifier.padding(innerPadding),

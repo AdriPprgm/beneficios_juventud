@@ -102,6 +102,9 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         scope.launch {
                             beneficiosVM.Login()
                             if (beneficiosVM.estado.value.loginSuccess) {
+                                beneficiosVM.actualizarEstaLoggeado(true)
+                                println("loginSuccess:")
+                                println(beneficiosVM.estado.value.loginSuccess)
                                 navController.navigate(Pantalla.RUTA_MAPA) {
                                     popUpTo(Pantalla.RUTA_LOGIN) { inclusive = true }
                                 }
@@ -120,7 +123,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
             composable(Pantalla.RUTA_MENU) { Menu(navController) }
             composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
-            composable(Pantalla.RUTA_PERFIL) { Perfil(navController) }
+            composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
             composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
             composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio() }
         }

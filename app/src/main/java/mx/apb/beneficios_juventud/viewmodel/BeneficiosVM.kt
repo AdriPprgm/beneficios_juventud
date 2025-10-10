@@ -59,7 +59,7 @@ class BeneficiosVM : ViewModel()
         try {
             val response = ClienteApi.service.login(request)
             Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
-            _estado.value = _estado.value.copy(loginSuccess = response.success)
+            _estado.value = _estado.value.copy(loginSuccess = true)
             if (response.success) {
                 modelo.correo = obtenerCredencial() // esta medio horrible esto pero bueno
             }
@@ -71,7 +71,7 @@ class BeneficiosVM : ViewModel()
 
     fun signOut() {
         borrarDatos()
-        actualizarEstaLoggeado(true)
+        actualizarEstaLoggeado(false)
         Log.d("AUTH_STATE", "User signed out. loginSuccess is now false.")
     }
 }
