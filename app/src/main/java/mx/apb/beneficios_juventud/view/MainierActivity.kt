@@ -43,7 +43,6 @@ import mx.apb.beneficios_juventud.view.Olvidaste
 import mx.apb.beneficios_juventud.view.Pantalla
 import mx.apb.beneficios_juventud.view.Perfil
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
-import androidx.compose.runtime.collectAsState
 
 
 class MainActivity : ComponentActivity() {
@@ -122,7 +121,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             }
             composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
             composable(Pantalla.RUTA_MENU) { Menu(navController) }
-            composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
+            composable(Pantalla.RUTA_AVISOS) { ScreenText("Notificaciones") }
             composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
             composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
             composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio() }
@@ -140,7 +139,7 @@ fun BottomBar(navController: NavHostController, items: List<String>){
             val icon = when (screen) {
                 Pantalla.RUTA_MAPA -> Icons.Default.LocationOn
                 Pantalla.RUTA_MENU -> Icons.Default.Menu
-                Pantalla.RUTA_NOTIFICACIONES -> Icons.Default.Notifications
+                Pantalla.RUTA_AVISOS -> Icons.Default.Notifications
                 Pantalla.RUTA_PERFIL -> Icons.Default.AccountCircle
                 else -> Icons.Default.Menu // No estoy muy segura de qué hace esta línea
             }

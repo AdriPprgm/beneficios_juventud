@@ -1,146 +1,183 @@
-    package mx.apb.beneficios_juventud.view
+package mx.apb.beneficios_juventud.view
 
-    import androidx.compose.foundation.Image
-    import androidx.compose.foundation.clickable
-    import androidx.compose.foundation.horizontalScroll
-    import androidx.compose.foundation.layout.*
-    import androidx.compose.foundation.lazy.LazyColumn
-    import androidx.compose.foundation.lazy.items
-    import androidx.compose.foundation.rememberScrollState
-    import androidx.compose.material3.*
-    import androidx.compose.runtime.*
-    import androidx.compose.ui.*
-    import androidx.compose.ui.graphics.Color
-    import androidx.compose.ui.layout.ContentScale
-    import androidx.compose.ui.res.painterResource
-    import androidx.compose.ui.text.style.TextAlign
-    import androidx.compose.ui.unit.dp
-    import androidx.compose.ui.unit.sp
-    import androidx.navigation.NavHostController
-    import mx.apb.beneficios_juventud.R // Asegúrate de tener imágenes de ejemplo en res/drawable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import mx.apb.beneficios_juventud.R
+import java.util.Collections.list
 
-    data class Oferta(
-        val imagenRes: Int,
-        val titulo: String,
-        val descripcion: String
+// Modelo simple de una oferta
+data class Oferta(
+    val imagenRes: Int,
+    val titulo: String,
+    val descripcion: String
+)
+
+@Composable
+fun Menu(navController: NavHostController) {
+    var searchText by remember { mutableStateOf("") }
+
+    // Lista de ejemplo de ofertas
+    val ofertas = listOf(
+        Oferta(R.drawable.oferta1, "Six Flags", "10% de descuento en pases de un día"),
     )
 
-    @Composable
-    fun Menu(navController: NavHostController) {
-        var searchText by remember { mutableStateOf("") }
+    Scaffold(
+        containerColor = Color.White,
+        topBar = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Menú principal",
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
 
-        val categorias = listOf(
-            "Todas", "Salud", "Belleza", "Entretenimiento", "Moda", "Comida", "Educación"
-        )
-
-        var categoriaSeleccionada by remember { mutableStateOf("Todas") }
-
-        // Lista de ejemplo de ofertas
-        val ofertas = listOf(
-            Oferta(R.drawable.oferta1, "Six Flags", "10% de descuento en pases de un día"),
-        )
-
-        Scaffold(
-            containerColor = Color.White,
-            topBar = {
-                Column(
+                TextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    placeholder = { Text("Buscar en el menú") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Menú principal",
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center
-                    )
+                        .padding(top = 8.dp)
+                )
 
-                    TextField(
-                        value = searchText,
-                        onValueChange = { searchText = it },
-                        placeholder = { Text("Buscar en el menú") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp)
-                    )
+                Divisor()
 
-                    Divisor()
+                // Se tiene que pasar categoriaSeleccionada con un setter
+                FiltroCategorias()
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp)
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        categorias.forEach { categoria ->
-                            FilterChip(
-                                selected = categoria == categoriaSeleccionada,
-                                onClick = { categoriaSeleccionada = categoria },
-                                label = { Text(categoria) }
-                            )
-                        }
-                    }
-
-                    Divisor()
-                }
+                Divisor()
             }
-        ) { padding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(ofertas) { oferta ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { navController.navigate(Pantalla.RUTA_CATALOGO) },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Image(
-                                painter = painterResource(id = oferta.imagenRes),
-                                contentDescription = oferta.titulo,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp), // ajusta la altura como quieras
-                                contentScale = ContentScale.Crop
-                            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(ofertas) { oferta ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { navController.navigate(Pantalla.RUTA_CATALOGO) },
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Image(
+                            painter = painterResource(id = oferta.imagenRes),
+                            contentDescription = oferta.titulo,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentScale = ContentScale.Crop
+                        )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                            Text(
-                                text = oferta.titulo,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(horizontal = 8.dp)
-                            )
+                        Text(
+                            text = oferta.titulo,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
 
-                            Text(
-                                text = oferta.descripcion,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+                        Text(
+                            text = oferta.descripcion,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                 }
             }
         }
     }
+}
 
-
-    @Composable
-    fun Divisor()
-    {
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            thickness = 1.dp,
-            color = Color.LightGray
+@Composable
+fun FiltroCategorias() {
+    // Lista de categorías con estado recordado
+    var categorias by remember {
+        mutableStateOf(
+            listOf(
+                Categoria("Salud", false),
+                Categoria("Belleza", false),
+                Categoria("Entretenimiento", false),
+                Categoria("Moda", false),
+                Categoria("Comida", false),
+                Categoria("Educación", false)
+            )
         )
     }
+
+    // Estado de la pseudo-categoría "Todas"
+    val todasActivadas = categorias.all { it.activada }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // ---- Pseudocategoría "Todas" ----
+        FilterChip(
+            selected = todasActivadas,
+            onClick = {
+                val nuevoEstado = !todasActivadas
+                categorias = categorias.map { it.copy(activada = nuevoEstado) }
+            },
+            label = { Text("Todas") }
+        )
+
+        // ---- Categorías normales ----
+        categorias.forEachIndexed { index, categoria ->
+            FilterChip(
+                selected = categoria.activada,
+                onClick = {
+                    categorias = categorias.mapIndexed { i, c ->
+                        if (i == index) c.copy(activada = !c.activada) else c
+                    }
+                },
+                label = { Text(categoria.nombre) }
+            )
+        }
+    }
+}
+
+data class Categoria(
+    val nombre: String,
+    val activada: Boolean
+)
+
+
+@Composable
+fun Divisor() {
+    HorizontalDivider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+        thickness = 1.dp,
+        color = Color.LightGray
+    )
+}

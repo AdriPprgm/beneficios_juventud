@@ -17,7 +17,7 @@ sealed class Pantalla (
         const val RUTA_LOGIN = "Login"
         const val RUTA_MAPA = "Mapa"
         const val RUTA_MENU = "Menu"
-        const val RUTA_NOTIFICACIONES = "Notificaciones"
+        const val RUTA_AVISOS = "Avisos"
         const val RUTA_PERFIL = "Perfil"
         const val RUTA_OLVIDASTE = "Olvidaste"
         const val RUTA_LOGIN_NEGOCIOS = "LoginNegocios"
@@ -27,7 +27,7 @@ sealed class Pantalla (
         val pantallasBottomBar = listOf(
             RUTA_MAPA,
             RUTA_MENU,
-            RUTA_NOTIFICACIONES,
+            RUTA_AVISOS,
             RUTA_PERFIL)
     }
     // Objeto para los botones del bottom bar
@@ -36,7 +36,7 @@ sealed class Pantalla (
     private data object PantallaMenu:
         Pantalla(RUTA_MENU, "Menú", Icons.Default.Menu)
     private data object PantallaNotificaciones:
-            Pantalla(RUTA_NOTIFICACIONES, "Notificaciones", Icons.Default.Notifications)
+            Pantalla(RUTA_AVISOS, "Avisos", Icons.Default.Notifications)
     private data object PantallaPerfil:
             Pantalla(RUTA_PERFIL, "Perfil", Icons.Default.AccountCircle)
 }
