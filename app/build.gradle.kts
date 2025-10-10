@@ -63,6 +63,10 @@ dependencies {
     
     implementation("io.coil-kt:coil-compose:2.7.0")
 
+
+    implementation("com.google.maps.android:maps-compose:6.1.0")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

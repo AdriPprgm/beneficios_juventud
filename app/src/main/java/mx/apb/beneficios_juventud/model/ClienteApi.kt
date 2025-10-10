@@ -7,7 +7,8 @@ object ClienteApi {
     private val retrofit by lazy {
         Retrofit.Builder()
             //https://ufa5c6ltpkvbuwapdie6c6npju0cwotk.lambda-url.us-east-1.on.aws/
-            .baseUrl("https://fgdmbhrw5b.execute-api.us-east-2.amazonaws.com/dev/auth/login/")
+            //https://fgdmbhrw5b.execute-api.us-east-2.amazonaws.com/dev/auth/login/
+            .baseUrl("https://ufa5c6ltpkvbuwapdie6c6npju0cwotk.lambda-url.us-east-1.on.aws/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

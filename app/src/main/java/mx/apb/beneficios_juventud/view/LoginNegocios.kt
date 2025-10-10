@@ -80,7 +80,7 @@ fun LoginNegocios(
             Spacer(modifier = Modifier.height(50.dp))
             OlvidasteContrasena(navController)
             Spacer(modifier = Modifier.height(30.dp))
-            AccesoNegocio(navController)
+
         }
     }
 }
