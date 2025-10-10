@@ -124,7 +124,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             composable(Pantalla.RUTA_AVISOS) { ScreenText("Notificaciones") }
             composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
             composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
-            composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio() }
+            composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
         }
     }
 }
