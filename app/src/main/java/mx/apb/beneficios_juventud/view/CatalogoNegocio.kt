@@ -37,7 +37,7 @@ data class Promo(
     val descripcion: String,
     val badge: String
 )
-
+//
 @Composable
 fun CatalogoNegocio(navController: NavHostController) {
     // Lista de promociones simuladas
