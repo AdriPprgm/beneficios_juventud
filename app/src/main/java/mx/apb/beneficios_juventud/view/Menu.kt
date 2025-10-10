@@ -1,6 +1,7 @@
     package mx.apb.beneficios_juventud.view
 
     import androidx.compose.foundation.Image
+    import androidx.compose.foundation.clickable
     import androidx.compose.foundation.horizontalScroll
     import androidx.compose.foundation.layout.*
     import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@
     import androidx.compose.ui.text.style.TextAlign
     import androidx.compose.ui.unit.dp
     import androidx.compose.ui.unit.sp
+    import androidx.navigation.NavHostController
     import mx.apb.beneficios_juventud.R // Asegúrate de tener imágenes de ejemplo en res/drawable
 
     data class Oferta(
@@ -24,7 +26,7 @@
     )
 
     @Composable
-    fun Menu() {
+    fun Menu(navController: NavHostController) {
         var searchText by remember { mutableStateOf("") }
 
         val categorias = listOf(
@@ -84,7 +86,6 @@
                 }
             }
         ) { padding ->
-            // Lista de ofertas
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -94,13 +95,14 @@
             ) {
                 items(ofertas) { oferta ->
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navController.navigate(Pantalla.RUTA_CATALOGO) },
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            // 🔹 Imagen grande ocupando todo el ancho
                             Image(
                                 painter = painterResource(id = oferta.imagenRes),
                                 contentDescription = oferta.titulo,
@@ -112,14 +114,12 @@
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // 🔹 Título
                             Text(
                                 text = oferta.titulo,
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
 
-                            // 🔹 Descripción
                             Text(
                                 text = oferta.descripcion,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -129,7 +129,6 @@
                     }
                 }
             }
-
         }
     }
 

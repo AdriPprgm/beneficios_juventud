@@ -22,6 +22,7 @@ sealed class Pantalla (
         const val RUTA_PERFIL = "Perfil"
         const val RUTA_OLVIDASTE = "Olvidaste"
         const val RUTA_LOGIN_NEGOCIOS = "LoginNegocios"
+        const val RUTA_CATALOGO = "Catalogo"
         val pantallasBottomBar = listOf(
             RUTA_MAPA,
             RUTA_MENU,
