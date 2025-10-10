@@ -7,6 +7,8 @@ data class EstadoBeneficios(
 
     val loginSuccess: Boolean = false,
 
+    var mensajeError: String = "", // DESPUES AGREGAMOS FUNCIONALIDAD A ESTE VALOR
+
     // Variables para el mapa
     var solicitudMapa: String = ""
 )

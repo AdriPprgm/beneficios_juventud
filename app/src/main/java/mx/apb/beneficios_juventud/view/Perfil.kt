@@ -20,17 +20,36 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.viewmodel.PerfilVM
 import mx.apb.beneficios_juventud.viewmodel.EstadoPerfil
 import mx.apb.beneficios_juventud.model.CategoriaBeneficios
 import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.model.UsoBeneficios
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun Perfil() {
-    val vm: PerfilVM = viewModel()
-    val state by vm.uiState.collectAsState()
+fun Perfil(navController: NavHostController,
+    beneficiosVM: BeneficiosVM = viewModel())
+    {
+        val estado by beneficiosVM.estado.collectAsState()
+        val vm: PerfilVM = viewModel()
+        val state by vm.uiState.collectAsState()
+        var mostrarConfirmacion by remember { mutableStateOf(false) }
+        val vm1: BeneficiosVM = viewModel()
+
+
+    if (!estado.loginSuccess){
+        navController.navigate(Pantalla.RUTA_LOGIN)
+    }
+
+    if (mostrarConfirmacion) {
+        ConfirmarLogout(
+            onDismiss = { mostrarConfirmacion = false },
+            onConfirm = { vm1.signOut() }
+            )
+    }
 
     Scaffold(
         topBar = { PerfilTopBar() }
@@ -65,7 +84,7 @@ fun Perfil() {
                     modifier = Modifier.padding(innerPadding),
                     perfil = perfil,
                     historial = historial,
-                    onSignOut = { vm.signOut() }
+                    onSignOut = { mostrarConfirmacion = true }
                 )
             }
         }
@@ -244,4 +263,13 @@ private fun CategoryChip(c: CategoriaBeneficios) {
         label = { Text(label) },
         leadingIcon = { Icon(icon, contentDescription = null) }
     )
+}
+
+@Composable
+fun ConfirmarLogout(onDismiss: () -> Unit, onConfirm: () -> Unit){
+    AlertDialog(onDismissRequest = onDismiss,
+        confirmButton = {TextButton(onClick = onConfirm) { Text("Cerrar sesión") }},
+        dismissButton = {TextButton(onClick = onDismiss) { Text("Regresar") }},
+        title = { Text("Aviso") },
+        text = { Text("¿Desea cerrar sesión?") })
 }

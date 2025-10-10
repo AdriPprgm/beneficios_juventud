@@ -6,11 +6,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.model.BeneficiosJuventud
 import mx.apb.beneficios_juventud.model.PerfilTemporal
+import mx.apb.beneficios_juventud.view.Pantalla
 
 class PerfilVM(
     private val repo: PerfilTemporal = PerfilTemporal()
 ) : ViewModel() {
+    private val modelo = BeneficiosJuventud()
 
     private val _uiState = MutableStateFlow<EstadoPerfil>(EstadoPerfil.Loading)
     val uiState: StateFlow<EstadoPerfil> = _uiState.asStateFlow()
@@ -31,9 +34,5 @@ class PerfilVM(
                 _uiState.value = EstadoPerfil.Error("Error al cargar el perfil")
             }
         }
-    }
-
-    fun signOut() {
-        // logica SignOut
     }
 }

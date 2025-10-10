@@ -43,6 +43,7 @@ import mx.apb.beneficios_juventud.view.Olvidaste
 import mx.apb.beneficios_juventud.view.Pantalla
 import mx.apb.beneficios_juventud.view.Perfil
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
+import androidx.compose.runtime.collectAsState
 
 
 class MainActivity : ComponentActivity() {
@@ -90,10 +91,10 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
         ) {
             composable(Pantalla.RUTA_LOGIN) {
                 /**
-                 * Posiblemente tenemos que cambiar la forma en la cual manejamos
-                 * el login en las pantallas, ademas tenemos que re acomodar las pantallas
-                 * principales, ya que creo que roman quiere la menor cantidad funciones
-                 * en MainActivity
+                 * Esta medio horrible la solucion de si hizo login
+                 * o saca mensaje de error pero ni modo
+                 * Funicona para ahorita
+                 * TODO cambiarlo despues, quiensabe ¯\_(ツ)_/¯
                  * @author Adrian Proano Bernal
                  */
                 Login(
@@ -119,7 +120,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
             composable(Pantalla.RUTA_MENU) { Menu(navController) }
             composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
-            composable(Pantalla.RUTA_PERFIL) { Perfil() }
+            composable(Pantalla.RUTA_PERFIL) { Perfil(navController) }
             composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
             composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio() }
         }
