@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.view.CatalogoNegocio
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.LoginNegocios
 import mx.apb.beneficios_juventud.view.Mapa
@@ -113,17 +114,14 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                 )
             }
             composable(Pantalla.RUTA_OLVIDASTE) {
-                ScreenText("Olvidaste") // placeholder
-            }
-            composable(Pantalla.RUTA_OLVIDASTE) {
                 Olvidaste(beneficiosVM, navController)
-
             }
             composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
-            composable(Pantalla.RUTA_MENU) { Menu() }
+            composable(Pantalla.RUTA_MENU) { Menu(navController) }
             composable(Pantalla.RUTA_NOTIFICACIONES) { ScreenText("Notificaciones") }
             composable(Pantalla.RUTA_PERFIL) { Perfil() }
             composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
+            composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio() }
         }
     }
 }
