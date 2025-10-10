@@ -1,13 +1,9 @@
 package mx.apb.beneficios_juventud.viewmodel
 
-import android.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.model.BeneficiosJuventud
 import mx.apb.beneficios_juventud.model.ClienteApi
 import mx.apb.beneficios_juventud.model.LoginRequest
@@ -41,12 +37,18 @@ class BeneficiosVM : ViewModel()
         return _estado.value.credencial
     }
 
+    fun borrarDatos() {
+        actualizarCredencial("")
+        actualizarContrasena("")
+    }
+
+
     // Interfaz para la vista de mapa
     fun actualizarSolicitudMapa(solicitudIngresada: String) {
         _estado.value = _estado.value.copy(solicitudMapa = solicitudIngresada)
     }
 
-    suspend fun testLogin() {
+    suspend fun Login() {
         val request = LoginRequest.create(
             rawCredencial = obtenerCredencial(),
             rawContrasena = obtenerContrasena()
@@ -59,5 +61,9 @@ class BeneficiosVM : ViewModel()
             Log.e("API_TEST", "Error: ${e.message}", e)
             _estado.value = _estado.value.copy(loginSuccess = false)
         }
+    }
+
+    suspend fun LogOut(){
+
     }
 }

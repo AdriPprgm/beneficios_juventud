@@ -12,14 +12,19 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,6 +62,17 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val scope = rememberCoroutineScope()
+    var falla by remember { mutableStateOf(false) }
+
+    if (falla) {
+        AvisoError(
+            onDismiss = {
+                beneficiosVM.borrarDatos()
+                falla = false
+            },
+            errorMessage = "Credenciales incorrectas"
+        )
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -82,13 +98,13 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                 Login(
                     loginClick = {
                         scope.launch {
-                            beneficiosVM.testLogin()
+                            beneficiosVM.Login()
                             if (beneficiosVM.estado.value.loginSuccess) {
                                 navController.navigate(Pantalla.RUTA_MAPA) {
                                     popUpTo(Pantalla.RUTA_LOGIN) { inclusive = true }
                                 }
                             } else {
-                                navController.navigate(Pantalla.RUTA_LOGIN)
+                                falla = true
                             }
                         }
                     },
@@ -139,6 +155,16 @@ fun BottomBar(navController: NavHostController, items: List<String>){
             )
         }
     }
+}
+
+@Composable
+fun AvisoError( onDismiss: () -> Unit, errorMessage: String) {
+    AlertDialog(onDismissRequest =  onDismiss,
+        confirmButton = {TextButton(onClick = onDismiss ){ Text("Reintentar") }},
+        title = { Text("Aviso") },
+        text = { Text(errorMessage) },
+        icon = {}
+    )
 }
 
 @Composable
