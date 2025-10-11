@@ -38,7 +38,6 @@ fun Perfil(
         val vm: PerfilVM = viewModel()
         val state by vm.uiState.collectAsState()
         var mostrarConfirmacion by remember { mutableStateOf(false) }
-        val vm1: BeneficiosVM = viewModel()
 
 
     if (estado.loginSuccess == false){
@@ -48,7 +47,8 @@ fun Perfil(
     if (mostrarConfirmacion) {
         ConfirmarLogout(
             onDismiss = { mostrarConfirmacion = false },
-            onConfirm = { vm1.signOut() }
+            onConfirm = { beneficiosVM.signOut()
+                mostrarConfirmacion = false }
             )
     }
 

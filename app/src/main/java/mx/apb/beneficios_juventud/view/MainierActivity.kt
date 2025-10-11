@@ -20,6 +20,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,11 +61,24 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(beneficiosVM: BeneficiosVM) {
     val navController = rememberNavController()
     val bottomBarItems = Pantalla.pantallasBottomBar
-
+    val estado by beneficiosVM.estado.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val scope = rememberCoroutineScope()
     var falla by remember { mutableStateOf(false) }
+
+    LaunchedEffect(estado.loginSuccess) {
+        // If the user is no longer logged in AND they are not already on a login-related screen...
+        if (!estado.loginSuccess && currentRoute != Pantalla.RUTA_LOGIN) {
+            navController.navigate(Pantalla.RUTA_LOGIN) {
+                // Clear the entire back stack to prevent going back to a screen that requires login
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+                launchSingleTop = true // Avoid multiple copies of the login screen
+            }
+        }
+    }
 
     if (falla) {
         AvisoError(
