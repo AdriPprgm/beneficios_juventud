@@ -9,48 +9,88 @@ import mx.apb.beneficios_juventud.model.ClienteApi
 import mx.apb.beneficios_juventud.model.LoginRequest
 
 /**
- * Un Viewmodel de la arquitectura
+ * @author: Israel González Huerta
+ * @author: Adrián Proaño Bernal
+ * @author: Juan Pablo Solís Gómez
+ *
+ * ViewModel principal de la aplicación Beneficios Juventud.
+ *
+ * Maneja el estado de la sesión de usuario, credenciales, login/logout y datos relacionados
+ * con la interfaz de usuario, incluyendo solicitudes para el mapa y almacenamiento temporal.
  */
+class BeneficiosVM : ViewModel() {
 
-class BeneficiosVM : ViewModel()
-{
-    // Modelo
+    /** Modelo que simula o contiene datos del usuario. */
     private val modelo = BeneficiosJuventud()
 
-    // Estado de la Aplicación
+    /** Estado mutable interno de la aplicación. */
     private val _estado = MutableStateFlow(EstadoBeneficios())
-    val estado: StateFlow<EstadoBeneficios> = _estado // No usamos mutable, porque esta variable es pública
-    // estado no altera la variable, _estado sí puede alterarlar, pero como es privada solo se puede ver
 
-    // Interfaz de login
+    /** Estado público inmutable expuesto a la UI. */
+    val estado: StateFlow<EstadoBeneficios> = _estado
+
+    // ---------------------
+    // Funciones de login
+    // ---------------------
+
+    /**
+     * Actualiza la credencial ingresada por el usuario (correo o teléfono).
+     */
     fun actualizarCredencial(credencialIngresada: String) {
         _estado.value = _estado.value.copy(credencial = credencialIngresada)
     }
+
+    /**
+     * Actualiza la contraseña ingresada por el usuario.
+     */
     fun actualizarContrasena(contrasenaIngresada: String) {
         _estado.value = _estado.value.copy(contrasena = contrasenaIngresada)
     }
-    fun obtenerContrasena(): String {
-        return _estado.value.contrasena
-    }
-    fun obtenerCredencial(): String {
-        return _estado.value.credencial
+
+    /** Retorna la contraseña actualmente almacenada en el estado. */
+    fun obtenerContrasena(): String = _estado.value.contrasena
+
+    /** Retorna la credencial actualmente almacenada en el estado. */
+    fun obtenerCredencial(): String = _estado.value.credencial
+
+    /**
+     * Actualiza el estado de login.
+     *
+     * @param variableInsana Boolean que indica si el usuario está loggeado.
+     */
+    fun actualizarEstaLoggeado(variableInsana: Boolean) {
+        _estado.value = _estado.value.copy(loginSuccess = variableInsana)
     }
 
-    fun actualizarEstaLoggeado(varaiableInsana: Boolean){
-        _estado.value = _estado.value.copy(loginSuccess = varaiableInsana)
-    }
-
+    /** Borra los datos de login (credencial y contraseña). */
     fun borrarDatos() {
         actualizarCredencial("")
         actualizarContrasena("")
     }
 
+    // ---------------------
+    // Funciones de mapa
+    // ---------------------
 
-    // Interfaz para la vista de mapa
+    /**
+     * Actualiza la solicitud del mapa que ingresa el usuario.
+     *
+     * @param solicitudIngresada Texto con la solicitud de ubicación.
+     */
     fun actualizarSolicitudMapa(solicitudIngresada: String) {
         _estado.value = _estado.value.copy(solicitudMapa = solicitudIngresada)
     }
 
+    // ---------------------
+    // Función de autenticación
+    // ---------------------
+
+    /**
+     * Realiza el login del usuario contra la API.
+     *
+     * Usa las credenciales almacenadas en el estado y actualiza `loginSuccess` según
+     * el resultado de la API. Si la autenticación es exitosa, almacena el correo en el modelo.
+     */
     suspend fun Login() {
         val request = LoginRequest.create(
             rawCredencial = obtenerCredencial(),
@@ -61,7 +101,7 @@ class BeneficiosVM : ViewModel()
             Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
             _estado.value = _estado.value.copy(loginSuccess = true)
             if (response.success) {
-                modelo.correo = obtenerCredencial() // esta medio horrible esto pero bueno
+                modelo.correo = obtenerCredencial() // asignación al modelo
             }
         } catch (e: Exception) {
             Log.e("API_TEST", "Error: ${e.message}", e)
@@ -69,6 +109,15 @@ class BeneficiosVM : ViewModel()
         }
     }
 
+    // ---------------------
+    // Función de logout
+    // ---------------------
+
+    /**
+     * Cierra la sesión del usuario.
+     *
+     * Borra credenciales y actualiza el estado de login a `false`.
+     */
     fun signOut() {
         borrarDatos()
         actualizarEstaLoggeado(false)

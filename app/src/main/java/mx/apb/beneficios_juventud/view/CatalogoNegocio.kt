@@ -1,6 +1,5 @@
 package mx.apb.beneficios_juventud.view
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -26,11 +25,16 @@ import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.R
 import mx.apb.beneficios_juventud.model.Promo
 
-// Catálogo estático
-
-// Estilos base
+// Estilos para la insignia de descuento
 private val PurpleBadge = Color(0xFF7C4DFF)
 private val BadgeTextColor = Color.White
+
+/**
+ * Pantalla de catálogo de un negocio (Six Flags México) que muestra las promociones activas.
+ * @author Juan Pablo Solís Gómez
+ *
+ * @param navController controlador de navegación para volver a la pantalla anterior.
+ */
 @Composable
 fun CatalogoNegocio(navController: NavHostController) {
     val promos = listOf(
@@ -68,7 +72,7 @@ fun CatalogoNegocio(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Imagen de banner
+            // Banner e información inicial
             item {
                 Image(
                     painter = painterResource(id = R.drawable.banner_sixflags),
@@ -92,6 +96,7 @@ fun CatalogoNegocio(navController: NavHostController) {
                 )
             }
 
+            // Lista de promociones
             items(promos) { promo ->
                 PromoCard(
                     promo = promo,
@@ -102,6 +107,12 @@ fun CatalogoNegocio(navController: NavHostController) {
     }
 }
 
+/**
+ * Barra superior con título, botón de regresar y avatar.
+ *
+ * @param title título mostrado en la barra.
+ * @param onBack acción al presionar la flecha de regreso.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBarNegocio(
@@ -134,7 +145,12 @@ private fun TopBarNegocio(
     )
 }
 
-//  Tarjeta individual de promoción
+/**
+ * Tarjeta individual que representa una promoción.
+ *
+ * @param promo promoción a mostrar.
+ * @param modifier modificador opcional para personalizar el layout.
+ */
 @Composable
 private fun PromoCard(promo: Promo, modifier: Modifier = Modifier) {
     ElevatedCard(
@@ -149,7 +165,7 @@ private fun PromoCard(promo: Promo, modifier: Modifier = Modifier) {
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Imagen pequeña a la izquierda
+            // Imagen de la promoción
             Image(
                 painter = painterResource(id = promo.imagenRes),
                 contentDescription = promo.titulo,
@@ -189,7 +205,11 @@ private fun PromoCard(promo: Promo, modifier: Modifier = Modifier) {
     }
 }
 
-//  Indicador con el descuento
+/**
+ * Indicador visual para mostrar el descuento o badge de la promoción.
+ *
+ * @param text texto que se mostrará dentro del badge.
+ */
 @Composable
 private fun BadgePill(text: String) {
     Box(

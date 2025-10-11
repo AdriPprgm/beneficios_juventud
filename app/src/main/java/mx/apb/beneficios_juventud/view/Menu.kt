@@ -21,7 +21,12 @@ import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.model.ClasesMenu
 import mx.apb.beneficios_juventud.model.ofertas
 
-
+/**
+ * Composable principal que muestra el menú de ofertas.
+ * @author Israel González Huerta
+ *
+ * @param navController controlador de navegación para moverse entre pantallas.
+ */
 @Composable
 fun Menu(navController: NavHostController) {
     var searchText by remember { mutableStateOf("") }
@@ -52,7 +57,7 @@ fun Menu(navController: NavHostController) {
 
                 Divisor()
 
-                // Se tiene que pasar categoriaSeleccionada con un setter
+                // Filtro de categorías con estado interno
                 FiltroCategorias()
 
                 Divisor()
@@ -103,9 +108,12 @@ fun Menu(navController: NavHostController) {
     }
 }
 
+/**
+ * Composable que muestra un filtro de categorías usando [FilterChip].
+ * Permite seleccionar múltiples categorías o activar "Todas" para seleccionar/desactivar todo.
+ */
 @Composable
 fun FiltroCategorias() {
-    // Lista de categorías con estado recordado
     var clasesMenus by remember {
         mutableStateOf(
             listOf(
@@ -119,7 +127,6 @@ fun FiltroCategorias() {
         )
     }
 
-    // Para activar "todas"
     val todasActivadas = clasesMenus.all { it.activada }
 
     Row(
@@ -129,7 +136,7 @@ fun FiltroCategorias() {
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // "Categoría" de todas
+        // Chip para seleccionar/deseleccionar todas las categorías
         FilterChip(
             selected = todasActivadas,
             onClick = {
@@ -139,7 +146,7 @@ fun FiltroCategorias() {
             label = { Text("Todas") }
         )
 
-        // Categorías normales
+        // Chips para categorías individuales
         clasesMenus.forEachIndexed { index, categoria ->
             FilterChip(
                 selected = categoria.activada,
@@ -154,6 +161,9 @@ fun FiltroCategorias() {
     }
 }
 
+/**
+ * Composable que dibuja un divisor horizontal.
+ */
 @Composable
 fun Divisor() {
     HorizontalDivider(

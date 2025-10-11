@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,13 +19,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.compose.ui.tooling.preview.Preview
 import mx.apb.beneficios_juventud.model.Notif
 
+/**
+ * Composable principal que muestra la lista de notificaciones del usuario.
+ * @author Juan Pablo Solís Gómez
+ *
+ * @param navController Controlador de navegación para regresar a la pantalla anterior.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Avisos(navController: NavHostController) {
 
+    // Lista de notificaciones de ejemplo
     val notificaciones = listOf(
         Notif(
             titulo = "¡Six Flags 2x1!",
@@ -88,6 +93,12 @@ fun Avisos(navController: NavHostController) {
     }
 }
 
+/**
+ * Barra superior de la pantalla de notificaciones.
+ *
+ * @param title Título que se muestra en la barra.
+ * @param onBack Acción que se ejecuta al presionar el botón de regresar.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBarAvisos(
@@ -120,6 +131,13 @@ private fun TopBarAvisos(
     )
 }
 
+/**
+ * Tarjeta individual de notificación.
+ *
+ * Muestra el título, descripción, fecha y un badge de categoría.
+ *
+ * @param notificacion Objeto [Notif] con los datos de la notificación.
+ */
 @Composable
 private fun NotificationCard(notificacion: Notif) {
     ElevatedCard(
@@ -127,9 +145,9 @@ private fun NotificationCard(notificacion: Notif) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
-            // Encabezado
+            // Encabezado con título y fecha
             Row(verticalAlignment = Alignment.CenterVertically) {
-                
+
                 Spacer(Modifier.width(10.dp))
 
                 Text(
@@ -151,6 +169,7 @@ private fun NotificationCard(notificacion: Notif) {
 
             Spacer(Modifier.height(8.dp))
 
+            // Descripción de la notificación
             Text(
                 text = notificacion.descripcion,
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF5B5B5B)),
@@ -160,7 +179,7 @@ private fun NotificationCard(notificacion: Notif) {
 
             Spacer(Modifier.height(10.dp))
 
-
+            // Badge con categoría de la notificación
             AssistChip(
                 onClick = {  },
                 label = { Text(notificacion.badge, style = MaterialTheme.typography.labelMedium) },

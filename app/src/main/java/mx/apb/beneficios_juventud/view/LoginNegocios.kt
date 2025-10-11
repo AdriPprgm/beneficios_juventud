@@ -23,7 +23,11 @@ import coil.compose.AsyncImage
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 /**
- * @author: Israel González Huerta
+ * Pantalla de inicio de sesión para negocios asociados.
+ *
+ * @param beneficiosVM instancia del ViewModel para manejar el estado y la lógica de login.
+ * @param navController controlador de navegación para moverse entre pantallas.
+ * @param modifier modificador opcional para personalizar la UI.
  */
 @Composable
 fun LoginNegocios(
@@ -48,6 +52,7 @@ fun LoginNegocios(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+            // Logo de la aplicación
             AsyncImage(
                 model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0SU-5o1tEX9nEWacSjibNe2wy_Dp9TmDhzg&s",
                 contentDescription = "Logo beneficios juventud",
@@ -63,19 +68,26 @@ fun LoginNegocios(
                 valor = estado.credencial,
                 onCambio = { beneficiosVM.actualizarCredencial(it) }
             )
+
             CampoContrasena(
                 valor = estado.contrasena,
                 onCambio = { beneficiosVM.actualizarContrasena(it) }
             )
+
             Spacer(modifier = Modifier.height(50.dp))
-            Button(onClick = {}) {
+
+            // Botón de ingreso a la pantalla principal de negocios
+            Button(onClick = {
+                navController.navigate("MenuNegocios")
+            }) {
                 Text("Ingresar")
             }
 
             Spacer(modifier = Modifier.height(50.dp))
-            OlvidasteContrasena(navController)
-            Spacer(modifier = Modifier.height(30.dp))
 
+            OlvidasteContrasena(navController)
+
+            Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }

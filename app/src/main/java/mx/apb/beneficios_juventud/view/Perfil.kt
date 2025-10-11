@@ -16,10 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.viewmodel.PerfilVM
 import mx.apb.beneficios_juventud.viewmodel.EstadoPerfil
@@ -29,27 +29,36 @@ import mx.apb.beneficios_juventud.model.UsoBeneficios
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 import java.time.format.DateTimeFormatter
 
+/**
+ * Pantalla de perfil de usuario que muestra información del usuario y su historial de beneficios.
+ *
+ * @param navController Controlador de navegación para mover entre pantallas.
+ * @param beneficiosVM ViewModel principal que maneja el estado de sesión y login.
+ */
 @Composable
 fun Perfil(
     navController: NavHostController,
-    beneficiosVM: BeneficiosVM)
-    {
-        val estado by beneficiosVM.estado.collectAsState()
-        val vm: PerfilVM = viewModel()
-        val state by vm.uiState.collectAsState()
-        var mostrarConfirmacion by remember { mutableStateOf(false) }
+    beneficiosVM: BeneficiosVM
+) {
+    val estado by beneficiosVM.estado.collectAsState()
+    val vm: PerfilVM = viewModel()
+    val state by vm.uiState.collectAsState()
+    var mostrarConfirmacion by remember { mutableStateOf(false) }
 
-
-    if (estado.loginSuccess == false){
+    // Redirige al login si no hay sesión activa
+    if (!estado.loginSuccess) {
         navController.navigate(Pantalla.RUTA_LOGIN)
     }
 
+    // Mostrar diálogo de confirmación para cerrar sesión
     if (mostrarConfirmacion) {
         ConfirmarLogout(
             onDismiss = { mostrarConfirmacion = false },
-            onConfirm = { beneficiosVM.signOut()
-                mostrarConfirmacion = false }
-            )
+            onConfirm = {
+                beneficiosVM.signOut()
+                mostrarConfirmacion = false
+            }
+        )
     }
 
     Scaffold(
@@ -61,9 +70,7 @@ fun Perfil(
                     .padding(innerPadding)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            ) { CircularProgressIndicator() }
 
             is EstadoPerfil.Error -> Box(
                 Modifier
@@ -92,8 +99,9 @@ fun Perfil(
     }
 }
 
-// UI
-
+/**
+ * Barra superior de la pantalla de perfil.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PerfilTopBar() {
@@ -102,6 +110,14 @@ private fun PerfilTopBar() {
     )
 }
 
+/**
+ * Contenido principal del perfil.
+ *
+ * @param modifier Modificador de Compose para la columna principal.
+ * @param perfil Datos del usuario a mostrar.
+ * @param historial Lista de beneficios utilizados por el usuario.
+ * @param onSignOut Callback para cerrar sesión.
+ */
 @Composable
 private fun PerfilContent(
     modifier: Modifier = Modifier,
@@ -116,9 +132,7 @@ private fun PerfilContent(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
-            ProfileCard(perfil = perfil)
-        }
+        item { ProfileCard(perfil = perfil) }
 
         item {
             Text(
@@ -140,23 +154,21 @@ private fun PerfilContent(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = MaterialTheme.shapes.extraLarge
-            ) {
-                Text("Cerrar sesión")
-            }
+            ) { Text("Cerrar sesión") }
             Spacer(Modifier.navigationBarsPadding())
         }
     }
 }
 
-/* ---------- Widgets ---------- */
-
+/**
+ * Tarjeta con información del perfil del usuario.
+ */
 @Composable
 private fun ProfileCard(perfil: PerfilUsuario) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large
     ) {
-        // “Banner”
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,14 +176,12 @@ private fun ProfileCard(perfil: PerfilUsuario) {
                 .background(MaterialTheme.colorScheme.primaryContainer)
         )
 
-        // Avatar + nombre + edad (como en el prototipo)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar placeholder circular
             Box(
                 modifier = Modifier
                     .size(72.dp)
@@ -204,6 +214,12 @@ private fun ProfileCard(perfil: PerfilUsuario) {
     }
 }
 
+/**
+ * Elemento de historial de beneficios usados.
+ *
+ * @param uso Información del beneficio usado.
+ * @param formatter Formateador de fechas.
+ */
 @Composable
 private fun BenefitItem(uso: UsoBeneficios, formatter: DateTimeFormatter) {
     ElevatedCard(
@@ -252,6 +268,11 @@ private fun BenefitItem(uso: UsoBeneficios, formatter: DateTimeFormatter) {
     }
 }
 
+/**
+ * Chip que representa la categoría del beneficio.
+ *
+ * @param c Categoría del beneficio.
+ */
 @Composable
 private fun CategoryChip(c: CategoriaBeneficios) {
     val (label, icon) = when (c) {
@@ -266,11 +287,19 @@ private fun CategoryChip(c: CategoriaBeneficios) {
     )
 }
 
+/**
+ * Diálogo de confirmación para cerrar sesión.
+ *
+ * @param onDismiss Callback al cancelar.
+ * @param onConfirm Callback al confirmar.
+ */
 @Composable
-fun ConfirmarLogout(onDismiss: () -> Unit, onConfirm: () -> Unit){
-    AlertDialog(onDismissRequest = onDismiss,
-        confirmButton = {TextButton(onClick = onConfirm) { Text("Cerrar sesión") }},
-        dismissButton = {TextButton(onClick = onDismiss) { Text("Regresar") }},
+fun ConfirmarLogout(onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { TextButton(onClick = onConfirm) { Text("Cerrar sesión") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Regresar") } },
         title = { Text("Aviso") },
-        text = { Text("¿Desea cerrar sesión?") })
+        text = { Text("¿Desea cerrar sesión?") }
+    )
 }
