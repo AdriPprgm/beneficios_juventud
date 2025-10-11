@@ -170,7 +170,6 @@ data class Categoria(
     val activada: Boolean
 )
 
-
 @Composable
 fun Divisor() {
     HorizontalDivider(
