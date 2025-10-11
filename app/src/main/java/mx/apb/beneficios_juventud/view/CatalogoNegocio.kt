@@ -24,23 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.R
+import mx.apb.beneficios_juventud.model.Promo
 
 // Catálogo estático
 
 // Estilos base
 private val PurpleBadge = Color(0xFF7C4DFF)
 private val BadgeTextColor = Color.White
-
-data class Promo(
-    val imagenRes: Int,
-    val titulo: String,
-    val descripcion: String,
-    val badge: String
-)
-//
 @Composable
 fun CatalogoNegocio(navController: NavHostController) {
-    // Lista de promociones simuladas
     val promos = listOf(
         Promo(
             imagenRes = R.drawable.pase_anual,
@@ -110,7 +102,6 @@ fun CatalogoNegocio(navController: NavHostController) {
     }
 }
 
-//  Top Bar con flecha atrás y avatar circular
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBarNegocio(

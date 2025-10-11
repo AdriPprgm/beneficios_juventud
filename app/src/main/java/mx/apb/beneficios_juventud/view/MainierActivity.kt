@@ -36,6 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.view.Avisos
 import mx.apb.beneficios_juventud.view.CatalogoNegocio
 import mx.apb.beneficios_juventud.view.Login
 import mx.apb.beneficios_juventud.view.LoginNegocios
@@ -136,7 +137,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
             }
             composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
             composable(Pantalla.RUTA_MENU) { Menu(navController) }
-            composable(Pantalla.RUTA_AVISOS) { ScreenText("Notificaciones") }
+            composable(Pantalla.RUTA_AVISOS) { Avisos(navController) }
             composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
             composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
             composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
