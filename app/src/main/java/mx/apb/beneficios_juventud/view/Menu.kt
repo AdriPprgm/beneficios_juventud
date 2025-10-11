@@ -18,24 +18,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import mx.apb.beneficios_juventud.R
-import java.util.Collections.list
+import mx.apb.beneficios_juventud.model.ClasesMenu
+import mx.apb.beneficios_juventud.model.ofertas
 
-// Modelo simple de una oferta
-data class Oferta(
-    val imagenRes: Int,
-    val titulo: String,
-    val descripcion: String
-)
 
 @Composable
 fun Menu(navController: NavHostController) {
     var searchText by remember { mutableStateOf("") }
-
-    // Lista de ejemplo de ofertas
-    val ofertas = listOf(
-        Oferta(R.drawable.oferta1, "Six Flags", "10% de descuento en pases de un día"),
-    )
 
     Scaffold(
         containerColor = Color.White,
@@ -117,21 +106,21 @@ fun Menu(navController: NavHostController) {
 @Composable
 fun FiltroCategorias() {
     // Lista de categorías con estado recordado
-    var categorias by remember {
+    var clasesMenus by remember {
         mutableStateOf(
             listOf(
-                Categoria("Salud", false),
-                Categoria("Belleza", false),
-                Categoria("Entretenimiento", false),
-                Categoria("Moda", false),
-                Categoria("Comida", false),
-                Categoria("Educación", false)
+                ClasesMenu("Salud", false),
+                ClasesMenu("Belleza", false),
+                ClasesMenu("Entretenimiento", false),
+                ClasesMenu("Moda", false),
+                ClasesMenu("Comida", false),
+                ClasesMenu("Educación", false)
             )
         )
     }
 
-    // Estado de la pseudo-categoría "Todas"
-    val todasActivadas = categorias.all { it.activada }
+    // Para activar "todas"
+    val todasActivadas = clasesMenus.all { it.activada }
 
     Row(
         modifier = Modifier
@@ -140,22 +129,22 @@ fun FiltroCategorias() {
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // ---- Pseudocategoría "Todas" ----
+        // "Categoría" de todas
         FilterChip(
             selected = todasActivadas,
             onClick = {
                 val nuevoEstado = !todasActivadas
-                categorias = categorias.map { it.copy(activada = nuevoEstado) }
+                clasesMenus = clasesMenus.map { it.copy(activada = nuevoEstado) }
             },
             label = { Text("Todas") }
         )
 
-        // ---- Categorías normales ----
-        categorias.forEachIndexed { index, categoria ->
+        // Categorías normales
+        clasesMenus.forEachIndexed { index, categoria ->
             FilterChip(
                 selected = categoria.activada,
                 onClick = {
-                    categorias = categorias.mapIndexed { i, c ->
+                    clasesMenus = clasesMenus.mapIndexed { i, c ->
                         if (i == index) c.copy(activada = !c.activada) else c
                     }
                 },
@@ -164,11 +153,6 @@ fun FiltroCategorias() {
         }
     }
 }
-
-data class Categoria(
-    val nombre: String,
-    val activada: Boolean
-)
 
 @Composable
 fun Divisor() {
