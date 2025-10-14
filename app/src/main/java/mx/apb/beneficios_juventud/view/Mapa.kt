@@ -59,13 +59,18 @@ fun Mapa(beneficiosVM: BeneficiosVM) {
         }
     ) { padding ->
 
-        // --- Configuración del mapa ---
-        val atizapan = LatLng(19.56, -99.25)
+        //  Configuración del mapa
+        val sixflags = LatLng(19.2953821, -99.2097713702751)
+        val labtk = LatLng(19.55407429127162, -99.24117214324389)
+        val galerias = LatLng(19.54937295, -99.2744741764268)
+        val teatro = LatLng(19.57203264749966, -99.23721587983601)
+        val costco = LatLng(19.548420551297493, -99.27081424856226)
+
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(atizapan, 12f)
+            position = CameraPosition.fromLatLngZoom(labtk, 12f)
         }
 
-        // Punto azul (si ya tienes permiso en tiempo de ejecución)
+        // Punto azul
         val context = LocalContext.current
         val hasLocationPermission = remember {
             ContextCompat.checkSelfPermission(
@@ -96,11 +101,35 @@ fun Mapa(beneficiosVM: BeneficiosVM) {
                 properties = properties,
                 uiSettings = uiSettings
             ) {
-                // Marcador base (puedes luego mapear tu lista de establecimientos aquí)
+                // Lista de establecimientos marcados
                 Marker(
-                    state = MarkerState(position = atizapan),
-                    title = "Atizapán",
-                    snippet = "Beneficios Juventud"
+                    state = MarkerState(position = labtk),
+                    title = "La BTK Atizapán",
+                    snippet = "¡2 x 1 para estudiantes!"
+                )
+
+                Marker(
+                    state = MarkerState(position = sixflags),
+                    title = "Six Flags",
+                    snippet = "Descuento en pase anual"
+                )
+
+                Marker(
+                    state = MarkerState(position = galerias),
+                    title = "Galerías Atizapán",
+                    snippet = "10% de descuento en Starbucks"
+                )
+
+                Marker(
+                    state = MarkerState(position = teatro),
+                    title = "Teatro Zaragoza",
+                    snippet = "Descuentos en obras seleccionadas"
+                )
+
+                Marker(
+                    state = MarkerState(position = costco),
+                    title = "Costco Atizapán",
+                    snippet = "Descuentos en productos seleccionados"
                 )
             }
         }
