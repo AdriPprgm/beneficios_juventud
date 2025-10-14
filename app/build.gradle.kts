@@ -1,8 +1,14 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+
+val localProperties = gradleLocalProperties(rootDir, providers)
+val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY") ?: ""
+
 
 android {
     namespace = "mx.apb.beneficios_juventud"
@@ -16,6 +22,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Para la API de maps
+        resValue("string", "google_maps_key", mapsApiKey)
 
 
     }
@@ -68,6 +77,7 @@ dependencies {
 
     implementation("com.google.maps.android:maps-compose:6.1.0")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

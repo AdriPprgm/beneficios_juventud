@@ -12,7 +12,7 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 class BeneficiosJuventud {
     var correo: String = ""
-        //private set, PORQUE LO QUEREMOS PRIVATE???????
+        //private set
     var celular: String = ""
         private set
 }
