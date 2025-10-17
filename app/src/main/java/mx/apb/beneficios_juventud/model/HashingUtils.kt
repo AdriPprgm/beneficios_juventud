@@ -4,10 +4,10 @@ import java.security.MessageDigest
 
 object HashingUtils {
     /**
-     * Hashes an input string using the SHA-256 algorithm.
+     * Hashea un input string usando el algoritmo SHA-256.
      *
-     * @param input The string to be hashed.
-     * @return The hexadecimal representation of the SHA-256 hash.
+     * @param input string a ser hasheado.
+     * @return la representación hexadecimal del SHA-256 hash.
      * @author Adrian Proano Bernal
      */
     fun sha256(input: String): String{
