@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import mx.apb.beneficios_juventud.model.BeneficiosJuventud
-import mx.apb.beneficios_juventud.model.ClienteApi
-import mx.apb.beneficios_juventud.model.LoginRequest
+import mx.apb.beneficios_juventud.model.API.ClienteApi
+import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 
 /**
  * @author: Israel González Huerta
@@ -89,25 +89,85 @@ class BeneficiosVM : ViewModel() {
      * Realiza el login del usuario contra la API.
      *
      * Usa las credenciales almacenadas en el estado y actualiza `loginSuccess` según
-     * el resultado de la API. Si la autenticación es exitosa, almacena el correo en el modelo.
+     * el resultado de la API. Si la autenticación es exitosa, almacena el correo, token, rol nombre y folio en el modelo.
      */
     suspend fun Login() {
-        val request = LoginRequest.create(
-            rawCredencial = obtenerCredencial(),
-            rawContrasena = obtenerContrasena()
+        val request = LoginRequest(
+            email = obtenerCredencial(),
+            password = obtenerContrasena()
         )
+
         try {
             val response = ClienteApi.service.login(request)
             Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
-            _estado.value = _estado.value.copy(loginSuccess = true)
+
             if (response.success) {
-                modelo.correo = obtenerCredencial() // asignación al modelo
+                // Guardar datos del usuario en el modelo
+                modelo.setCorreo(response.user?.email ?: "")
+                modelo.setToken(response.token)
+                modelo.setRol(response.user?.role)
+                modelo.setNombre(response.user?.nombre)
+                modelo.setFolio(response.user?.folio)
+
+                // Actualizar el token global del ClienteApi (para el interceptor)
+                ClienteApi.actualizarToken(response.token)
+
+                // Logs de depuración
+                Log.d("USER_SESSION", """
+                    Sesión iniciada correctamente
+                    Correo: ${modelo.correo}
+                    Rol: ${modelo.rol}
+                    Token: ${modelo.token?.take(40)}... (truncado)
+            """.trimIndent())
+
+                //Actualizar estado de login
+                _estado.value = _estado.value.copy(loginSuccess = true)
+
+                probarCategorias()
+
+            } else {
+                Log.w("API_TEST", "Login fallido: ${response.message}")
+                _estado.value = _estado.value.copy(loginSuccess = false)
             }
+
         } catch (e: Exception) {
-            Log.e("API_TEST", "Error: ${e.message}", e)
+            Log.e("API_TEST", "Error durante login: ${e.message}", e)
             _estado.value = _estado.value.copy(loginSuccess = false)
         }
     }
+
+    suspend fun probarCategorias() {
+        try {
+            Log.d("API_TEST", "Iniciando solicitud GET /common/categorias...")
+
+            val response = ClienteApi.service.obtenerCategorias()
+
+            Log.d("API_TEST", "Respuesta completa: $response")
+
+            if (response.success) {
+                val categorias = response.data ?: emptyList()
+                Log.d("API_TEST", "Categorías obtenidas correctamente (${categorias.size})")
+
+                categorias.forEach { cat ->
+                    Log.d("API_TEST", "ID: ${cat.idCategoria} | Nombre: ${cat.nombreCategoria}")
+                }
+
+                if (categorias.isEmpty()) {
+                    Log.w("API_TEST", "El backend devolvió una lista vacía de categorías.")
+                }
+
+            } else {
+                Log.w("API_TEST", "La API devolvió success=false o error inesperado: $response")
+            }
+
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Error al obtener categorías: ${e.message}", e)
+        }
+    }
+
+
+
+
 
     // ---------------------
     // Función de logout
