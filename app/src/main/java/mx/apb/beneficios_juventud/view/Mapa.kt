@@ -33,7 +33,8 @@ import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 /**
- * @author: Israel González Huerta & Juan Pablo Solis Gomez
+ * @author: Israel González Huerta
+ * @author: Juan Pablo Solis Gomez
  */
 
 @OptIn(ExperimentalMaterial3Api::class)

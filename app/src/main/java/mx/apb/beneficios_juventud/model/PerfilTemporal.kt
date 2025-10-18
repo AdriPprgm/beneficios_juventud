@@ -2,6 +2,20 @@ package mx.apb.beneficios_juventud.model
 
 import java.time.LocalDate
 
+/**
+ * Clase temporal que simula un repositorio de datos del perfil del usuario
+ * dentro del sistema **Beneficios Juventud**.
+ *
+ * Esta implementación actúa como una **fuente de datos simulada (mock)**,
+ * utilizada principalmente durante las fases de desarrollo o pruebas de la aplicación,
+ * antes de conectar el sistema con un backend real o una base de datos.
+ *
+ * Proporciona métodos para obtener un perfil de usuario de ejemplo y un historial
+ * de beneficios utilizados, retornando datos estáticos representativos.
+ *
+ * Como dice el nombre, es TEMPORAL, cambiará una vez implementada la conexión con la BD
+ */
+
 class PerfilTemporal {
 
     suspend fun getPerfil(): PerfilUsuario =

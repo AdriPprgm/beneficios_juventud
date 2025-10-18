@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import mx.apb.beneficios_juventud.model.Notif
+import mx.apb.beneficios_juventud.model.Notificacion
 
 /**
  * Composable principal que muestra la lista de notificaciones del usuario.
@@ -33,37 +33,37 @@ fun Avisos(navController: NavHostController) {
 
     // Lista de notificaciones de ejemplo
     val notificaciones = listOf(
-        Notif(
+        Notificacion(
             titulo = "¡Six Flags 2x1!",
             descripcion = "Promoción especial para beneficiarios. Válida hasta 31 de diciembre.",
             fecha = "20 Nov 2025",
             badge = "Entretenimiento"
         ),
-        Notif(
+        Notificacion(
             titulo = "Farmacias Guadalajara 15% Dcto.",
             descripcion = "Aprovecha el 15% de descuento en medicamentos seleccionados.",
             fecha = "18 Nov 2025",
             badge = "Salud"
         ),
-        Notif(
+        Notificacion(
             titulo = "Cinépolis: Entrada al 2x1",
             descripcion = "Disfruta de tus películas favoritas con 2x1 en entradas.",
             fecha = "15 Nov 2025",
             badge = "Entretenimiento"
         ),
-        Notif(
+        Notificacion(
             titulo = "Nuevo Beneficio: Little Caesars",
             descripcion = "Pizza grande por solo $99 MXN. ¡No te lo pierdas!",
             fecha = "10 Nov 2025",
             badge = "Comida"
         ),
-        Notif(
+        Notificacion(
             titulo = "Sally Beauty: 20% en productos",
             descripcion = "Renueva tu look con este increíble descuento en Sally Beauty.",
             fecha = "05 Nov 2025",
             badge = "Belleza"
         ),
-        Notif(
+        Notificacion(
             titulo = "Librerías Gandhi: 10% en libros",
             descripcion = "Fomenta la lectura con descuentos en todas las sucursales Gandhi.",
             fecha = "01 Nov 2025",
@@ -139,7 +139,7 @@ private fun TopBarAvisos(
  * @param notificacion Objeto [Notif] con los datos de la notificación.
  */
 @Composable
-private fun NotificationCard(notificacion: Notif) {
+private fun NotificationCard(notificacion: Notificacion) {
     ElevatedCard(
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier.fillMaxWidth()
