@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import mx.apb.beneficios_juventud.Loadingicon
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 /**
@@ -44,49 +45,53 @@ fun Login(
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 24.dp, vertical = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            // Logo de la aplicación
-            AsyncImage(
-                model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0SU-5o1tEX9nEWacSjibNe2wy_Dp9TmDhzg&s",
-                contentDescription = "Logo beneficios juventud",
+        if (estado.LoadingLogin){
+            Loadingicon()
+        } else {
+            Column(
                 modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                // Logo de la aplicación
+                AsyncImage(
+                    model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0SU-5o1tEX9nEWacSjibNe2wy_Dp9TmDhzg&s",
+                    contentDescription = "Logo beneficios juventud",
+                    modifier = Modifier
+                        .height(150.dp)
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
 
-            Titulo("Iniciar sesión")
+                Titulo("Iniciar sesión")
 
-            CampoIdentificador(
-                valor = estado.credencial,
-                onCambio = { beneficiosVM.actualizarCredencial(it) }
-            )
+                CampoIdentificador(
+                    valor = estado.credencial,
+                    onCambio = { beneficiosVM.actualizarCredencial(it) }
+                )
 
-            CampoContrasena(
-                valor = estado.contrasena,
-                onCambio = { beneficiosVM.actualizarContrasena(it) }
-            )
+                CampoContrasena(
+                    valor = estado.contrasena,
+                    onCambio = { beneficiosVM.actualizarContrasena(it) }
+                )
 
-            Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(50.dp))
 
-            Button(onClick = loginClick) {
-                Text("Ingresar")
+                Button(onClick = loginClick) {
+                    Text("Ingresar")
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+                OlvidasteContrasena(navController)
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                AccesoNegocio(navController)
             }
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            OlvidasteContrasena(navController)
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            AccesoNegocio(navController)
         }
     }
 }

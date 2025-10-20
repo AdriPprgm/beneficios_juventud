@@ -97,6 +97,8 @@ class BeneficiosVM : ViewModel() {
             password = obtenerContrasena()
         )
 
+        _estado.value = _estado.value.copy(LoadingLogin = true)
+
         try {
             val response = ClienteApi.service.login(request)
             Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
@@ -133,6 +135,9 @@ class BeneficiosVM : ViewModel() {
         } catch (e: Exception) {
             Log.e("API_TEST", "Error durante login: ${e.message}", e)
             _estado.value = _estado.value.copy(loginSuccess = false)
+        }
+        finally {
+            _estado.value = _estado.value.copy(LoadingLogin = false)
         }
     }
 

@@ -6,6 +6,7 @@ data class EstadoBeneficios(
     var credencial: String = "",
 
     var loginSuccess: Boolean = false,
+    var LoadingLogin: Boolean = false,
 
     var mensajeError: String = "", // DESPUES AGREGAMOS FUNCIONALIDAD A ESTE VALOR
 
