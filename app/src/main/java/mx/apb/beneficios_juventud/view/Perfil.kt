@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.ContactPage
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Wc
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -41,7 +43,6 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import mx.apb.beneficios_juventud.R
-
 
 /**
  * Pantalla de perfil de usuario que muestra información del usuario y su historial de beneficios.
@@ -405,11 +406,15 @@ private fun PerfilDetallesCard(detalle: BeneficiarioDetalle) {
                 value = detalle.celular?.takeIf { it.isNotBlank() } ?: "—"
             )
 
-            InfoRow(
-                icon = Icons.Default.ContactPage,
-                label = "Folio",
-                value = maskFolio(detalle.folio)
-            )
+            // Toggle folio
+            var mostrarFolioCompleto by remember { mutableStateOf(false) }
+            val folioMostrado = when {
+                detalle.folio.isNullOrBlank() -> "—"
+                mostrarFolioCompleto -> detalle.folio!!
+                else -> maskFolio(detalle.folio)
+            }
+
+            FolioRow(detalle.folio)
 
             InfoRow(
                 icon = Icons.Default.Email,
@@ -425,6 +430,64 @@ private fun PerfilDetallesCard(detalle: BeneficiarioDetalle) {
         }
     }
 }
+/**
+ * Fila composable que muestra el folio del beneficiario con opción para
+ * alternar entre su versión enmascarada y la completa.
+ *
+ * Esta función utiliza un estado local (`mostrarCompleto`) que se reinicia
+ * automáticamente cuando el valor del folio cambia, garantizando que la
+ * visibilidad del texto siempre esté sincronizada con los datos más recientes.
+ *
+ * - Por defecto, el folio se muestra enmascarado para proteger la privacidad del usuario.
+ * - Al tocar el ícono de "ojo" (`Visibility`), el folio completo se revela temporalmente.
+ * - Al volver a presionar, se oculta nuevamente.
+ */
+@Composable
+private fun FolioRow(folio: String?) {
+    // Estado local que se reinicia si cambia el folio
+    var mostrarCompleto by remember(folio) { mutableStateOf(false) }
+
+    val valor = when {
+        folio.isNullOrBlank() -> "—"
+        mostrarCompleto -> folio
+        else -> maskFolio(folio)
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.ContactPage,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.width(10.dp))
+
+        Column(Modifier.weight(1f)) {
+            Text(
+                "Folio",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                valor,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        IconButton(onClick = { mostrarCompleto = !mostrarCompleto }) {
+            Icon(
+                imageVector = if (mostrarCompleto) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                contentDescription = if (mostrarCompleto) "Ocultar folio" else "Mostrar folio"
+            )
+        }
+    }
+}
+
 
 /**
  * Fila reutilizable para mostrar un campo del perfil junto a un ícono descriptivo.
@@ -537,4 +600,3 @@ private fun mapSexo(sexo: String?): String =
         "O" -> "Otro"
         else -> sexo?.ifBlank { "—" } ?: "—"
     }
-

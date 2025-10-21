@@ -3,17 +3,30 @@ package mx.apb.beneficios_juventud.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -132,17 +145,31 @@ fun CampoIdentificador(valor: String, onCambio: (String) -> Unit) {
 /**
  * Campo de texto para ingresar contraseña.
  *
+ * permite alternar su visibilidad tocando el ícono del ojo
+ *
  * @param valor valor actual del campo.
  * @param onCambio callback que recibe el nuevo valor del campo.
  */
 @Composable
 fun CampoContrasena(valor: String, onCambio: (String) -> Unit) {
+    // Estado local que controla si la contraseña es visible o no
+    var visible by remember { mutableStateOf(false) }
+
     OutlinedTextField(
         value = valor,
         onValueChange = onCambio,
         label = { Text("Contraseña") },
         singleLine = true,
-        visualTransformation = PasswordVisualTransformation(),
+        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        trailingIcon = {
+            IconButton(onClick = { visible = !visible }) {
+                Icon(
+                    imageVector = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    contentDescription = if (visible) "Ocultar contraseña" else "Mostrar contraseña"
+                )
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -162,6 +189,7 @@ fun OlvidasteContrasena(navController: NavHostController) {
         }
     )
 }
+
 
 /**
  * Texto interactivo para acceder al login de negocios.
