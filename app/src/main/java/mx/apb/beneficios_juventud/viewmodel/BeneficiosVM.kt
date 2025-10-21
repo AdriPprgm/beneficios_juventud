@@ -202,10 +202,6 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-
-
-
     // ---------------------
     // Función de logout
     // ---------------------

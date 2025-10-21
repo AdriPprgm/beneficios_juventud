@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.R
 import mx.apb.beneficios_juventud.model.Promo
 
+
 // Estilos para la insignia de descuento
 private val PurpleBadge = Color(0xFF7C4DFF)
 private val BadgeTextColor = Color.White

@@ -92,6 +92,7 @@ fun Perfil(
                     modifier = Modifier.padding(innerPadding),
                     perfil = perfil,
                     historial = historial,
+                    onShowDigitalCard = { navController.navigate(Pantalla.RUTA_TARJETA) },
                     onSignOut = { mostrarConfirmacion = true }
                 )
             }
@@ -123,6 +124,7 @@ private fun PerfilContent(
     modifier: Modifier = Modifier,
     perfil: PerfilUsuario,
     historial: List<UsoBeneficios>,
+    onShowDigitalCard: () -> Unit,
     onSignOut: () -> Unit
 ) {
     val formatter = remember { DateTimeFormatter.ofPattern("dd 'de' LLLL, yyyy") }
@@ -147,6 +149,15 @@ private fun PerfilContent(
         }
 
         item {
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = onShowDigitalCard,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = MaterialTheme.shapes.extraLarge
+            ) { Text("Tarjeta digital") }
+
             Spacer(Modifier.height(8.dp))
             Button(
                 onClick = onSignOut,
