@@ -82,7 +82,7 @@ private fun TopBarAvisos(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Spacer izquierdo para balancear la barra
-                    Spacer(modifier = Modifier.width(70.dp)) // ancho similar al ícono de perfil + padding
+                    Spacer(modifier = Modifier.width(72.dp)) // ancho similar al ícono de perfil + padding
 
                     Text(
                         text = title,
