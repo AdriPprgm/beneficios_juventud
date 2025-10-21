@@ -1,7 +1,9 @@
 package mx.apb.beneficios_juventud.viewmodel
 
+import mx.apb.beneficios_juventud.model.BeneficiarioDetalle
 import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.model.UsoBeneficios
+
 /**
  * Representa los diferentes estados posibles del perfil de usuario dentro de la aplicación.
  *
@@ -20,7 +22,8 @@ sealed interface EstadoPerfil {
     // Estado que representa una carga exitosa de los datos del perfil del usuario.
     data class Exito(
         val perfil: PerfilUsuario,
-        val historial: List<UsoBeneficios>
+        val historial: List<UsoBeneficios>,
+        val detalle: BeneficiarioDetalle? = null
     ) : EstadoPerfil
     // Estado que representa un error al intentar cargar el perfil o el historial.
     data class Error(val mensaje: String) : EstadoPerfil

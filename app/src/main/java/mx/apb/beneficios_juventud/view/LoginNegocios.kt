@@ -29,6 +29,7 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
  * @param navController controlador de navegación para moverse entre pantallas.
  * @param modifier modificador opcional para personalizar la UI.
  */
+
 @Composable
 fun LoginNegocios(
     beneficiosVM: BeneficiosVM,

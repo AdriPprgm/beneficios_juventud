@@ -1,35 +1,39 @@
 package mx.apb.beneficios_juventud.view
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import mx.apb.beneficios_juventud.model.ClasesMenu
-import mx.apb.beneficios_juventud.model.ofertas
+import coil.compose.AsyncImage
+import mx.apb.beneficios_juventud.model.API.response.Categoria
+import mx.apb.beneficios_juventud.viewmodel.MenuVM
 
 /**
  * Composable principal que muestra el menú de ofertas.
  * @author Israel González Huerta
+ * @author Juan Pablo Solis Gomez
  *
  * @param navController controlador de navegación para moverse entre pantallas.
  */
 @Composable
-fun Menu(navController: NavHostController) {
-    var searchText by remember { mutableStateOf("") }
+fun Menu(navController: NavHostController, vm: MenuVM = viewModel()) {
+    val state by vm.state.collectAsState()
 
     Scaffold(
         containerColor = Color.White,
@@ -37,18 +41,41 @@ fun Menu(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(8.dp, 16.dp, 8.dp, 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Menú principal",
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
-                )
+                // Fila superior con título centrado e ícono a la derecha
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    // Título centrado
+                    Text(
+                        text = "Menú principal",
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
 
+                    // Ícono de perfil clickable a la derecha
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFE0E0E0))
+                            .clickable {
+                                navController.navigate(Pantalla.RUTA_PERFIL)
+                            }
+                    )
+                }
+
+                // Campo de búsqueda
                 TextField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
+                    value = state.search,
+                    onValueChange = vm::onSearchChange,
                     placeholder = { Text("Buscar en el menú") },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -57,12 +84,18 @@ fun Menu(navController: NavHostController) {
 
                 Divisor()
 
-                // Filtro de categorías con estado interno
-                FiltroCategorias()
+                // Filtro de categorías dinámico (desde API)
+                FiltroCategorias(
+                    categorias = state.categorias,
+                    seleccionadas = state.seleccionadas,
+                    onToggle = vm::toggleCategoria,
+                    onToggleTodas = vm::toggleTodas
+                )
 
                 Divisor()
             }
         }
+
     ) { padding ->
         LazyColumn(
             modifier = Modifier
@@ -71,63 +104,85 @@ fun Menu(navController: NavHostController) {
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(ofertas) { oferta ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navController.navigate(Pantalla.RUTA_CATALOGO) },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Image(
-                            painter = painterResource(id = oferta.imagenRes),
-                            contentDescription = oferta.titulo,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = oferta.titulo,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
-
-                        Text(
-                            text = oferta.descripcion,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
+            if (state.loading) {
+                item {
+                    Text("Cargando…", modifier = Modifier.padding(16.dp))
                 }
+            }
+
+            if (!state.loading && state.items.isEmpty()) {
+                item {
+                    Text("Sin resultados", modifier = Modifier.padding(16.dp))
+                }
+            }
+
+            items(state.items) { e ->
+                EstablecimientoCard(
+                    nombre = e.nombre,
+                    imagenUrl = e.logoURL,
+                    categorias = e.categorias,
+                    onClick = {
+                        // pásale el id al detalle si lo requieres
+                        navController.navigate("${Pantalla.RUTA_CATALOGO}/${e.idEstablecimiento}")
+                    }
+                )
             }
         }
     }
 }
 
-/**
- * Composable que muestra un filtro de categorías usando [FilterChip].
- * Permite seleccionar múltiples categorías o activar "Todas" para seleccionar/desactivar todo.
- */
 @Composable
-fun FiltroCategorias() {
-    var clasesMenus by remember {
-        mutableStateOf(
-            listOf(
-                ClasesMenu("Salud", false),
-                ClasesMenu("Belleza", false),
-                ClasesMenu("Entretenimiento", false),
-                ClasesMenu("Moda", false),
-                ClasesMenu("Comida", false),
-                ClasesMenu("Educación", false)
-            )
-        )
-    }
+private fun EstablecimientoCard(
+    nombre: String,
+    imagenUrl: String?,
+    categorias: List<String>,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
 
-    val todasActivadas = clasesMenus.all { it.activada }
+            // Imagen desde URL (como antes, ancho completo y alto fijo)
+            AsyncImage(
+                model = imagenUrl,
+                contentDescription = nombre,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = nombre,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+
+            if (categorias.isNotEmpty()) {
+                Text(
+                    text = categorias.joinToString(" • "),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FiltroCategorias(
+    categorias: List<Categoria>,
+    seleccionadas: Set<Int>,
+    onToggle: (Int) -> Unit,
+    onToggleTodas: () -> Unit
+) {
+    val todasActivadas = categorias.isNotEmpty() && seleccionadas.size == categorias.size
 
     Row(
         modifier = Modifier
@@ -136,30 +191,22 @@ fun FiltroCategorias() {
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Chip para seleccionar/deseleccionar todas las categorías
         FilterChip(
             selected = todasActivadas,
-            onClick = {
-                val nuevoEstado = !todasActivadas
-                clasesMenus = clasesMenus.map { it.copy(activada = nuevoEstado) }
-            },
+            onClick = onToggleTodas,
             label = { Text("Todas") }
         )
 
-        // Chips para categorías individuales
-        clasesMenus.forEachIndexed { index, categoria ->
+        categorias.forEach { c ->
             FilterChip(
-                selected = categoria.activada,
-                onClick = {
-                    clasesMenus = clasesMenus.mapIndexed { i, c ->
-                        if (i == index) c.copy(activada = !c.activada) else c
-                    }
-                },
-                label = { Text(categoria.nombre) }
+                selected = c.idCategoria in seleccionadas,
+                onClick = { onToggle(c.idCategoria) },
+                label = { Text(c.nombreCategoria) }
             )
         }
     }
 }
+
 
 /**
  * Composable que dibuja un divisor horizontal.

@@ -51,6 +51,8 @@ sealed class Pantalla(
         /** Ruta para la pantalla de menú exclusivo de negocios */
         const val RUTA_MENU_NEGOCIOS = "MenuNegocios"
 
+        const val RUTA_TARJETA = "tarjeta_digital"
+
         /**
          * Lista de rutas que aparecen en la barra inferior (BottomBar)
          */

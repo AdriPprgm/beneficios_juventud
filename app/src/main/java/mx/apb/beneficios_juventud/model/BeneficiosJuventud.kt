@@ -32,6 +32,7 @@ class BeneficiosJuventud {
     var token: String? = null
         private set
 
+
     // ---------------------------
     // Métodos públicos seguros
     // ---------------------------
