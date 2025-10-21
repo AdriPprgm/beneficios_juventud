@@ -3,26 +3,29 @@ package mx.apb.beneficios_juventud.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
@@ -40,7 +43,7 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun Mapa(beneficiosVM: BeneficiosVM) {
+fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
     val estado by beneficiosVM.estado.collectAsState()
 
     // Marcadores de negocios TODO pasar al VM
@@ -105,22 +108,41 @@ fun Mapa(beneficiosVM: BeneficiosVM) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(8.dp, 16.dp, 8.dp, 0.dp)
             ) {
-                Text(
-                    text = "Mapa de establecimientos",
-                    fontSize = 20.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+                // Fila superior: título centrado + ícono a la derecha
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    // Título centrado
+                    Text(
+                        text = "Mapa de establecimientos",
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
 
-                // Para autocompletar y mostrar posibles búsquedas
+                    // Ícono de perfil clickable (a la derecha)
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFE0E0E0))
+                            .clickable {
+                                navController.navigate(Pantalla.RUTA_PERFIL)
+                            }
+                    )
+                }
+
+                // Campo de búsqueda con autocompletar
                 ExposedDropdownMenuBox(
                     expanded = expanded && sugerencias.isNotEmpty(),
                     onExpandedChange = { expanded = it }
                 ) {
-                    // Para que el cursor no se mueva cuando cambian las sugerencias
-                    var value by remember { mutableStateOf(TextFieldValue(estado.solicitudMapa)) }
                     TextField(
                         value = estado.solicitudMapa,
                         onValueChange = { texto ->
@@ -143,6 +165,7 @@ fun Mapa(beneficiosVM: BeneficiosVM) {
                         colors = ExposedDropdownMenuDefaults.textFieldColors()
                     )
 
+                    // Lista desplegable con sugerencias
                     ExposedDropdownMenu(
                         expanded = expanded && sugerencias.isNotEmpty(),
                         onDismissRequest = { expanded = false }
@@ -152,16 +175,19 @@ fun Mapa(beneficiosVM: BeneficiosVM) {
                                 text = {
                                     Column {
                                         Text(s.titulo, style = MaterialTheme.typography.bodyMedium)
-                                        Text(s.snippet, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                                        Text(
+                                            s.snippet,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.Gray
+                                        )
                                     }
                                 },
                                 onClick = {
-                                    // Rellena el campo con el nombre
                                     beneficiosVM.actualizarSolicitudMapa(s.titulo)
                                     expanded = false
                                     focusManager.clearFocus()
 
-                                    // Mueve la cámara al marcador elegido
+                                    // Mover la cámara al marcador
                                     scope.launch {
                                         cameraPositionState.animate(
                                             CameraUpdateFactory.newLatLngZoom(s.pos, 16f), 550
@@ -175,6 +201,7 @@ fun Mapa(beneficiosVM: BeneficiosVM) {
                 }
             }
         }
+
     ) { padding ->
         Box(
             modifier = Modifier

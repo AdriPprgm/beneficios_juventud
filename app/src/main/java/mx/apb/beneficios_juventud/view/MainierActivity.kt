@@ -133,7 +133,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                 composable(Pantalla.RUTA_OLVIDASTE) {
                     Olvidaste(beneficiosVM, navController)
                 }
-                composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
+                composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM, navController) }
                 composable(Pantalla.RUTA_MENU) { Menu(navController) }
                 composable(Pantalla.RUTA_AVISOS) { Avisos(navController, beneficiosVM) }
                 composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
