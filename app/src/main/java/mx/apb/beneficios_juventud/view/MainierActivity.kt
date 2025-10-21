@@ -69,20 +69,6 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
     val scope = rememberCoroutineScope()
     var falla by remember { mutableStateOf(false) }
 
-    /**
-     * Efecto lanzado cada vez que cambia el estado de login.
-     * Si el usuario no está loggeado, se redirige automáticamente
-     * a la pantalla de inicio de sesión.
-     */
-    LaunchedEffect(estado.loginSuccess) {
-        if (!estado.loginSuccess && currentRoute != Pantalla.RUTA_LOGIN) {
-            navController.navigate(Pantalla.RUTA_LOGIN) {
-                popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                launchSingleTop = true
-            }
-        }
-    }
-
     // Muestra un diálogo de error si las credenciales son incorrectas
     if (falla) {
         AvisoError(
@@ -94,59 +80,68 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
         )
     }
 
-    Scaffold(
-        containerColor = Color.White,
-        bottomBar = {
-            if (currentRoute in bottomBarItems) {
-                BottomBar(navController, bottomBarItems)
+    if (estado.verifyingSess){
+        Scaffold(containerColor = Color.White) { padding ->
+            Box(modifier = Modifier.padding(padding)) {
+                Loadingicon()
             }
         }
-    ) { innerPadding ->
-        /**
-         * Sistema de navegación principal de la app.
-         * Define las rutas disponibles para cada pantalla.
-         */
-        NavHost(
-            navController = navController,
-            startDestination = Pantalla.RUTA_LOGIN,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(Pantalla.RUTA_LOGIN) {
-                /**
-                 * Pantalla de inicio de sesión de usuarios.
-                 * Si el login es exitoso, navega al mapa principal.
-                 *
-                 * @author
-                 * Adrián Proaño Bernal
-                 */
-                Login(
-                    loginClick = {
-                        scope.launch {
-                            beneficiosVM.Login()
-                            if (beneficiosVM.estado.value.loginSuccess) {
-                                beneficiosVM.actualizarEstaLoggeado(true)
-                                navController.navigate(Pantalla.RUTA_MAPA) {
-                                    popUpTo(Pantalla.RUTA_LOGIN) { inclusive = true }
+    } else {
+        val startDest = if (estado.loginSuccess) Pantalla.RUTA_MAPA else Pantalla.RUTA_LOGIN
+        Scaffold(
+            containerColor = Color.White,
+            bottomBar = {
+                if (currentRoute in bottomBarItems) {
+                    BottomBar(navController, bottomBarItems)
+                }
+            }
+        ) { innerPadding ->
+            /**
+             * Sistema de navegación principal de la app.
+             * Define las rutas disponibles para cada pantalla.
+             */
+            NavHost(
+                navController = navController,
+                startDestination = startDest,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(Pantalla.RUTA_LOGIN) {
+                    /**
+                     * Pantalla de inicio de sesión de usuarios.
+                     * Si el login es exitoso, navega al mapa principal.
+                     *
+                     * @author
+                     * Adrián Proaño Bernal
+                     */
+                    Login(
+                        loginClick = {
+                            scope.launch {
+                                beneficiosVM.Login()
+                                if (!beneficiosVM.estado.value.loginSuccess){
+                                    falla = true
                                 }
-                            } else {
-                                falla = true
                             }
-                        }
-                    },
-                    beneficiosVM = beneficiosVM,
-                    navController
-                )
+                        },
+                        beneficiosVM = beneficiosVM,
+                        navController
+                    )
+                }
+                composable(Pantalla.RUTA_OLVIDASTE) {
+                    Olvidaste(beneficiosVM, navController)
+                }
+                composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
+                composable(Pantalla.RUTA_MENU) { Menu(navController) }
+                composable(Pantalla.RUTA_AVISOS) { Avisos(navController) }
+                composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
+                composable(Pantalla.RUTA_LOGIN_NEGOCIOS) {
+                    LoginNegocios(
+                        beneficiosVM,
+                        navController
+                    )
+                }
+                composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
+                composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
             }
-            composable(Pantalla.RUTA_OLVIDASTE) {
-                Olvidaste(beneficiosVM, navController)
-            }
-            composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
-            composable(Pantalla.RUTA_MENU) { Menu(navController) }
-            composable(Pantalla.RUTA_AVISOS) { Avisos(navController) }
-            composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
-            composable(Pantalla.RUTA_LOGIN_NEGOCIOS) { LoginNegocios(beneficiosVM, navController) }
-            composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
-            composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
         }
     }
 }

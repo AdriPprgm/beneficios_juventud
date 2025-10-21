@@ -1,12 +1,18 @@
 package mx.apb.beneficios_juventud.viewmodel
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.model.BeneficiosJuventud
 import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
+import mx.apb.beneficios_juventud.model.ManagerSesion
 
 /**
  * @author: Israel González Huerta
@@ -18,7 +24,9 @@ import mx.apb.beneficios_juventud.model.API.request.LoginRequest
  * Maneja el estado de la sesión de usuario, credenciales, login/logout y datos relacionados
  * con la interfaz de usuario, incluyendo solicitudes para el mapa y almacenamiento temporal.
  */
-class BeneficiosVM : ViewModel() {
+class BeneficiosVM(application: Application) : AndroidViewModel(application) {
+
+    private val managerSesion = ManagerSesion(application)
 
     /** Modelo que simula o contiene datos del usuario. */
     private val modelo = BeneficiosJuventud()
@@ -28,6 +36,29 @@ class BeneficiosVM : ViewModel() {
 
     /** Estado público inmutable expuesto a la UI. */
     val estado: StateFlow<EstadoBeneficios> = _estado
+
+    init{
+        verificarSesion()
+    }
+
+    /**
+     * Revisa si existe un token de sesión guardado al iniciar la app.
+     * Si existe, restaura el estado de login.
+     * @author Adrián Proaño Bernal
+     */
+    private fun verificarSesion(){
+        viewModelScope.launch{
+            val token = managerSesion.authToken.first() //Obtiene el valor actual del Flow
+            if(!token.isNullOrBlank()){
+                Log.d("SESSION_MGR", "Token encontrado. Restaurando sesión.")
+                ClienteApi.actualizarToken(token) // Prepara el token para futuras llamadas a la API
+                _estado.value = _estado.value.copy(loginSuccess = true)
+            } else {
+                Log.d("SESSION_MGR", "Token no encontrado. No hay sesión activa.")
+            }
+            _estado.value = _estado.value.copy(verifyingSess = false)
+        }
+    }
 
     // ---------------------
     // Funciones de login
@@ -112,6 +143,7 @@ class BeneficiosVM : ViewModel() {
                 modelo.setFolio(response.user?.folio)
 
                 // Actualizar el token global del ClienteApi (para el interceptor)
+                response.token?.let { managerSesion.saveAuthToken(it) }
                 ClienteApi.actualizarToken(response.token)
 
                 // Logs de depuración
@@ -184,8 +216,13 @@ class BeneficiosVM : ViewModel() {
      * Borra credenciales y actualiza el estado de login a `false`.
      */
     fun signOut() {
-        borrarDatos()
-        actualizarEstaLoggeado(false)
-        Log.d("AUTH_STATE", "User signed out. loginSuccess is now false.")
+        viewModelScope.launch {
+            managerSesion.clearAuthToken()
+            ClienteApi.actualizarToken(null)
+            modelo.limpiarDatos()
+            borrarDatos()
+            actualizarEstaLoggeado(false)
+            Log.d("AUTH_STATE", "User signed out. loginSuccess is now false. Token cleared")
+        }
     }
 }

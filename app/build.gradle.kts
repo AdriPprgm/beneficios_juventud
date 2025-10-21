@@ -71,7 +71,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.firebase.appdistribution.gradle)
-    
+
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+
     implementation("io.coil-kt:coil-compose:2.7.0")
 
 
