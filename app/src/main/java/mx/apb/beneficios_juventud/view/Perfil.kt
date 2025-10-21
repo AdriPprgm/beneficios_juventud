@@ -20,6 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.viewmodel.PerfilVM
 import mx.apb.beneficios_juventud.viewmodel.EstadoPerfil
@@ -105,10 +107,29 @@ fun Perfil(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PerfilTopBar() {
-    TopAppBar(
-        title = { Text("Perfil de Usuario") }
-    )
+private fun PerfilTopBar(title: String = "Perfil de Usuario") {
+    Column {
+        TopAppBar(
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title,
+                        fontSize = 20.sp, // mismo tamaño que en otros TopBars
+                        color = Color.Black,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,   // barra blanca
+                titleContentColor = Color.Black // texto negro
+            ),
+        )
+        Divisor() // línea debajo del TopBar
+    }
 }
 
 /**
