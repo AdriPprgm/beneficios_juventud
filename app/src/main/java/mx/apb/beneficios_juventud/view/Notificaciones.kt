@@ -10,6 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,7 +21,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.model.Notificacion
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 /**
  * Composable principal que muestra la lista de notificaciones del usuario.
@@ -29,7 +33,7 @@ import mx.apb.beneficios_juventud.model.Notificacion
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Avisos(navController: NavHostController) {
+fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM) {
 
     // Lista de notificaciones de ejemplo
     val notificaciones = listOf(
@@ -88,6 +92,21 @@ fun Avisos(navController: NavHostController) {
         ) {
             items(notificaciones.size) { idx ->
                 NotificationCard(notificacion = notificaciones[idx])
+            }
+            item {
+                Spacer(Modifier.height(24.dp))
+                Button(
+                    onClick = {
+                        ClienteApi.actualizarToken(null)
+                        beneficiosVM.signOut()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = MaterialTheme.shapes.extraLarge
+                ) {
+                    Text("Cerrar sesión")
+                }
             }
         }
     }
@@ -193,3 +212,5 @@ private fun NotificationCard(notificacion: Notificacion) {
         }
     }
 }
+
+

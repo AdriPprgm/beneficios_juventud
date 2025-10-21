@@ -3,6 +3,7 @@ package mx.apb.beneficios_juventud.model.API
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
+import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
 import mx.apb.beneficios_juventud.model.API.response.SucursalesResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -45,5 +46,8 @@ interface ServicioApi {
 
     @GET("mobile/ubicacion-sucursales")
     suspend fun ubicarSucursales(): SucursalesResponse
+
+    @GET("mobile/detalles-perfil")
+    suspend fun getPerfil(): PerfilResponse
 
 }

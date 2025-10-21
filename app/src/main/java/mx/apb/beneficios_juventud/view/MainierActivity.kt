@@ -7,7 +7,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.view.*
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
@@ -68,6 +71,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
     val currentRoute = navBackStackEntry?.destination?.route
     val scope = rememberCoroutineScope()
     var falla by remember { mutableStateOf(false) }
+
 
     // Muestra un diálogo de error si las credenciales son incorrectas
     if (falla) {
@@ -131,7 +135,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                 }
                 composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM) }
                 composable(Pantalla.RUTA_MENU) { Menu(navController) }
-                composable(Pantalla.RUTA_AVISOS) { Avisos(navController) }
+                composable(Pantalla.RUTA_AVISOS) { Avisos(navController, beneficiosVM) }
                 composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
                 composable(Pantalla.RUTA_LOGIN_NEGOCIOS) {
                     LoginNegocios(
@@ -214,6 +218,7 @@ fun Loadingicon() {
         )
     }
 }
+
 
 /**
  * Composable simple que muestra texto centrado en la pantalla.
