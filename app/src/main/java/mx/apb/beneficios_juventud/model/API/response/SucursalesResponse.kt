@@ -5,7 +5,7 @@ data class SucursalDTO(
     val nombre: String,
     val latitud: Double,
     val longitud: Double,
-    val horaApertura: String?, // o LocalTime si lo parseas
+    val horaApertura: String?,
     val horaCierre: String?
 )
 

@@ -36,8 +36,9 @@ import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
 /**
- * @author: Israel González Huerta
- * @author: Juan Pablo Solis Gomez
+ * @author:
+ *  - Israel González Huerta
+ *  - Juan Pablo Solis Gomez
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,44 +47,31 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
     val estado by beneficiosVM.estado.collectAsState()
 
-    // Marcadores de negocios TODO pasar al VM
-    data class Pin(val titulo: String, val snippet: String, val pos: LatLng)
+    // Cargar sucursales al entrar
+    LaunchedEffect(Unit) { beneficiosVM.cargarSucursales() }
 
-    val sixflags = LatLng(19.2953821, -99.2097713702751)
-    val labtk = LatLng(19.55407429127162, -99.24117214324389)
-    val galerias = LatLng(19.54937295, -99.2744741764268)
-    val teatro = LatLng(19.57203264749966, -99.23721587983601)
-    val costco = LatLng(19.548420551297493, -99.27081424856226)
-
-    val pins = remember {
-        listOf(
-            Pin("La BTK Atizapán", "¡2 x 1 para estudiantes!", labtk),
-            Pin("Six Flags", "Descuento en pase anual", sixflags),
-            Pin("Galerías Atizapán", "10% de descuento en Starbucks", galerias),
-            Pin("Teatro Zaragoza", "Descuentos en obras seleccionadas", teatro),
-            Pin("Costco Atizapán", "Descuentos en productos seleccionados", costco)
-        )
-    }
-
-    // Filtrado
+    // Normalizador para filtro
     fun norm(s: String) = java.text.Normalizer.normalize(s.trim(), java.text.Normalizer.Form.NFD)
         .replace("\\p{InCombiningDiacriticalMarks}+".toRegex(), "")
         .lowercase()
 
     val query = estado.solicitudMapa
-    val sugerencias = remember(query, pins) {
+    val sugerencias = remember(query, estado.pinsMapa) {
         val q = norm(query)
-        val base = if (q.isBlank()) pins else pins.filter {
+        val base = if (q.isBlank()) estado.pinsMapa else estado.pinsMapa.filter {
             norm(it.titulo).contains(q) || norm(it.snippet).contains(q)
         }
-        base.take(6) // limite sugerencias
+        base.take(6)
     }
 
+    // Centro inicial: primer pin cargado o fallback (Atizapán)
+    val fallbackCenter = LatLng(19.55407429127162, -99.24117214324389)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(labtk, 12f)
+        position = CameraPosition.fromLatLngZoom(
+            estado.pinsMapa.firstOrNull()?.pos ?: fallbackCenter, 12f
+        )
     }
     val scope = rememberCoroutineScope()
-
 
     // Punto azul
     val context = LocalContext.current
@@ -110,13 +98,12 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(8.dp, 16.dp, 8.dp, 0.dp)
             ) {
-                // Fila superior: título centrado + ícono a la derecha
+                // Título centrado + avatar/perfil a la derecha
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                 ) {
-                    // Título centrado
                     Text(
                         text = "Mapa de establecimientos",
                         fontSize = 20.sp,
@@ -125,29 +112,24 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
                         modifier = Modifier.align(Alignment.Center)
                     )
 
-                    // Ícono de perfil clickable (a la derecha)
                     Box(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .size(32.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFE0E0E0))
-                            .clickable {
-                                navController.navigate(Pantalla.RUTA_PERFIL)
-                            }
+                            .clickable { navController.navigate(Pantalla.RUTA_PERFIL) }
                     )
                 }
 
-                // Campo de búsqueda con autocompletar
+                // Buscador con sugerencias
                 ExposedDropdownMenuBox(
                     expanded = expanded && sugerencias.isNotEmpty(),
                     onExpandedChange = { expanded = it }
                 ) {
                     TextField(
                         value = estado.solicitudMapa,
-                        onValueChange = { texto ->
-                            beneficiosVM.actualizarSolicitudMapa(texto)
-                        },
+                        onValueChange = { texto -> beneficiosVM.actualizarSolicitudMapa(texto) },
                         placeholder = { Text("Buscar por nombre o beneficio…") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -165,7 +147,6 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
                         colors = ExposedDropdownMenuDefaults.textFieldColors()
                     )
 
-                    // Lista desplegable con sugerencias
                     ExposedDropdownMenu(
                         expanded = expanded && sugerencias.isNotEmpty(),
                         onDismissRequest = { expanded = false }
@@ -186,8 +167,6 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
                                     beneficiosVM.actualizarSolicitudMapa(s.titulo)
                                     expanded = false
                                     focusManager.clearFocus()
-
-                                    // Mover la cámara al marcador
                                     scope.launch {
                                         cameraPositionState.animate(
                                             CameraUpdateFactory.newLatLngZoom(s.pos, 16f), 550
@@ -201,21 +180,49 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
                 }
             }
         }
-
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Indicadores de estado del mapa (opcionales)
+            if (estado.cargandoMapa) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(8.dp)
+                )
+            }
+            estado.errorMapa?.let { msg ->
+                Text(
+                    text = "Error cargando sucursales: $msg",
+                    color = Color.Red,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 48.dp)
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(8.dp)
+                    .background(Color(0x80FFFFFF))
+                    .padding(6.dp)
+            ) {
+                Text("pins: ${estado.pinsMapa.size}", fontSize = 12.sp, color = Color.Black)
+                estado.errorMapa?.let { Text("err: $it", fontSize = 12.sp, color = Color.Red) }
+            }
+
+
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
                 properties = properties,
                 uiSettings = uiSettings
             ) {
-                // Pinta solo los resultados para que coincida con el filtro
-                val visibles = if (query.isBlank()) pins else sugerencias
+                val visibles = if (query.isBlank()) estado.pinsMapa else sugerencias
                 visibles.forEach { p ->
                     Marker(
                         state = MarkerState(p.pos),
@@ -227,6 +234,8 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
         }
     }
 }
+
+
 
 
 

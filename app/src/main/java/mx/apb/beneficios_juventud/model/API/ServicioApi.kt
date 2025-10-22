@@ -5,6 +5,7 @@ import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
 import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
 import mx.apb.beneficios_juventud.model.API.response.SucursalesResponse
+import mx.apb.beneficios_juventud.model.API.response.UbicacionResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
@@ -49,5 +50,8 @@ interface ServicioApi {
 
     @GET("mobile/detalles-perfil")
     suspend fun getPerfil(): PerfilResponse
+
+    @GET("mobile/ubicacion-sucursales")
+    suspend fun ubicacionSucursales(): UbicacionResponse
 
 }
