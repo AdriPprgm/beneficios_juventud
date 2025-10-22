@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,80 +73,84 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
     val scope = rememberCoroutineScope()
     var falla by remember { mutableStateOf(false) }
 
+    val whiteScheme = lightColorScheme(
+        onPrimary = Color.White,
+        surface = Color.White,
+        background = Color.White
+    )
 
-    // Muestra un diálogo de error si las credenciales son incorrectas
-    if (falla) {
-        AvisoError(
-            onDismiss = {
-                beneficiosVM.borrarDatos()
-                falla = false
-            },
-            errorMessage = "Credenciales incorrectas"
-        )
-    }
-
-    if (estado.verifyingSess){
-        Scaffold(containerColor = Color.White) { padding ->
-            Box(modifier = Modifier.padding(padding)) {
-                Loadingicon()
+    MaterialTheme(colorScheme = whiteScheme) {
+        if (estado.verifyingSess) {
+            Scaffold(containerColor = Color.White) { padding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .background(Color.White)
+                ) {
+                    Loadingicon()
+                }
+            }
+        } else {
+            val startDest = if (estado.loginSuccess) Pantalla.RUTA_MAPA else Pantalla.RUTA_LOGIN
+            Scaffold(
+                containerColor = Color.White,
+                bottomBar = {
+                    if (currentRoute in bottomBarItems) {
+                        BottomBar(navController, bottomBarItems)
+                    }
+                }
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(innerPadding)
+                ) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDest,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        composable(Pantalla.RUTA_LOGIN) {
+                            Login(
+                                loginClick = {
+                                    scope.launch {
+                                        beneficiosVM.Login()
+                                        if (!beneficiosVM.estado.value.loginSuccess) {
+                                            falla = true
+                                        }
+                                    }
+                                },
+                                beneficiosVM = beneficiosVM,
+                                navController
+                            )
+                        }
+                        composable(Pantalla.RUTA_OLVIDASTE) {
+                            Olvidaste(beneficiosVM, navController)
+                        }
+                        composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM, navController) }
+                        composable(Pantalla.RUTA_MENU) { Menu(navController) }
+                        composable(Pantalla.RUTA_AVISOS) { Avisos(navController, beneficiosVM) }
+                        composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
+                        composable(Pantalla.RUTA_LOGIN_NEGOCIOS) {
+                            LoginNegocios(beneficiosVM, navController)
+                        }
+                        composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
+                        composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
+                    }
+                }
             }
         }
-    } else {
-        val startDest = if (estado.loginSuccess) Pantalla.RUTA_MAPA else Pantalla.RUTA_LOGIN
-        Scaffold(
-            containerColor = Color.White,
-            bottomBar = {
-                if (currentRoute in bottomBarItems) {
-                    BottomBar(navController, bottomBarItems)
-                }
-            }
-        ) { innerPadding ->
-            /**
-             * Sistema de navegación principal de la app.
-             * Define las rutas disponibles para cada pantalla.
-             */
-            NavHost(
-                navController = navController,
-                startDestination = startDest,
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable(Pantalla.RUTA_LOGIN) {
-                    /**
-                     * Pantalla de inicio de sesión de usuarios.
-                     * Si el login es exitoso, navega al mapa principal.
-                     *
-                     * @author
-                     * Adrián Proaño Bernal
-                     */
-                    Login(
-                        loginClick = {
-                            scope.launch {
-                                beneficiosVM.Login()
-                                if (!beneficiosVM.estado.value.loginSuccess){
-                                    falla = true
-                                }
-                            }
-                        },
-                        beneficiosVM = beneficiosVM,
-                        navController
-                    )
-                }
-                composable(Pantalla.RUTA_OLVIDASTE) {
-                    Olvidaste(beneficiosVM, navController)
-                }
-                composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM, navController) }
-                composable(Pantalla.RUTA_MENU) { Menu(navController) }
-                composable(Pantalla.RUTA_AVISOS) { Avisos(navController, beneficiosVM) }
-                composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
-                composable(Pantalla.RUTA_LOGIN_NEGOCIOS) {
-                    LoginNegocios(
-                        beneficiosVM,
-                        navController
-                    )
-                }
-                composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
-                composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
-            }
+
+        if (falla) {
+            AvisoError(
+                onDismiss = {
+                    beneficiosVM.borrarDatos()
+                    falla = false
+                },
+                errorMessage = "Credenciales incorrectas"
+            )
         }
     }
 }
