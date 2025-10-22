@@ -12,14 +12,6 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-private fun calcEdad(fechaStr: String?): Int {
-    if (fechaStr.isNullOrBlank()) return 0
-    return try {
-
-        val fecha = LocalDate.parse(fechaStr) // yyyy-MM-dd
-        Period.between(fecha, LocalDate.now()).years
-    } catch (_: Exception) { 0 }
-}
 
 private fun buildNombre(
     nombreUsuario: String?,
