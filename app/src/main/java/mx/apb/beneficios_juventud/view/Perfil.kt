@@ -29,9 +29,11 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Wc
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.model.BeneficiarioDetalle
 import mx.apb.beneficios_juventud.viewmodel.PerfilVM
@@ -77,7 +79,8 @@ fun Perfil(
     }
 
     Scaffold(
-        topBar = { PerfilTopBar() }
+        topBar = { PerfilTopBar() },
+        modifier = Modifier.background(Color.White)
     ) { innerPadding ->
         when (val s = state) {
             EstadoPerfil.Loading -> Box(
@@ -123,10 +126,31 @@ fun Perfil(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PerfilTopBar() {
-    TopAppBar(
-        title = { Text("Perfil de Usuario") }
-    )
+    Column {
+        TopAppBar(
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Perfil de Usuario",
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,          // Fondo blanco
+                titleContentColor = Color.Black,       // Texto negro
+                navigationIconContentColor = Color.Black,
+                actionIconContentColor = Color.Black
+            )
+        )
+        Divisor()
+    }
 }
+
 
 /**
  * Contenido principal del perfil.
@@ -148,7 +172,9 @@ private fun PerfilContent(
     val formatter = remember { DateTimeFormatter.ofPattern("dd 'de' LLLL, yyyy") }
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
