@@ -82,7 +82,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         beneficiosVM.onSessionExpiredDialogDismissed()
                         // Navega a la pantalla de login
                         navController.navigate(Pantalla.RUTA_LOGIN) {
-                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                            popUpTo(0) { inclusive = true }
                             launchSingleTop = true
                         }
                     }

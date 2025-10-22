@@ -62,11 +62,6 @@ fun Perfil(
     val state by vm.uiState.collectAsState()
     var mostrarConfirmacion by remember { mutableStateOf(false) }
 
-    // Redirige al login si no hay sesión activa
-    if (!estado.loginSuccess) {
-        navController.navigate(Pantalla.RUTA_LOGIN)
-    }
-
     // Mostrar diálogo de confirmación para cerrar sesión
     if (mostrarConfirmacion) {
         ConfirmarLogout(
@@ -74,6 +69,10 @@ fun Perfil(
             onConfirm = {
                 beneficiosVM.signOut()
                 mostrarConfirmacion = false
+                navController.navigate(Pantalla.RUTA_LOGIN) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
             }
         )
     }
