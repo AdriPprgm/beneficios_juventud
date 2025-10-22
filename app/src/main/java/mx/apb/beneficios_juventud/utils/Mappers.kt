@@ -3,7 +3,9 @@ package mx.apb.beneficios_juventud.utils
 
 import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.model.API.response.PerfilDto
+import mx.apb.beneficios_juventud.model.API.response.PromocionNetwork
 import mx.apb.beneficios_juventud.model.BeneficiarioDetalle
+import mx.apb.beneficios_juventud.model.Promo
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.Period
@@ -71,3 +73,17 @@ fun PerfilDto.toPerfilUsuario(): PerfilUsuario =
         age = calcEdadFlexible(fechaNacimiento),
         photoUrl = null // TODO cuando la API exponga foto, CAMBIAR aquí.
     )
+
+fun PromocionNetwork.toDomain() = Promo(
+    id = idPromocion,
+    titulo = titulo,
+    descripcion = descripcion,
+    imagenUrl = imagenURL,
+    vigente = vigente,
+    status = status,
+    establecimientoNombre = establecimiento,
+    establecimientoLogoUrl = establecimientoLogoURL,
+    validFrom = validFrom,
+    validTo = validTo,
+    fechaRegistro = fechaRegistro
+)

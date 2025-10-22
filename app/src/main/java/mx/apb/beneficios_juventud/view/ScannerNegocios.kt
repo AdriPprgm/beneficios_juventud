@@ -80,7 +80,7 @@ fun ScannerNegocios(navController: NavController) {
         ) {
             when {
                 tienePermisoCamara -> {
-                    // ✅ Mostrar cámara si ya hay permiso
+                    // Mostrar cámara si ya hay permiso
                     ScannerView { qrValue ->
                         resultado = qrValue
                     }
@@ -122,3 +122,4 @@ fun ScannerNegocios(navController: NavController) {
         }
     }
 }
+

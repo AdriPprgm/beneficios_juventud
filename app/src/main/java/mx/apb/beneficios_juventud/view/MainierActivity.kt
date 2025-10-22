@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.view.*
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
@@ -157,6 +159,15 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                             LoginNegocios(beneficiosVM, navController)
                         }
                         composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
+
+                        composable(
+                            route = "${Pantalla.RUTA_CATALOGO}/{id}",
+                            arguments = listOf(navArgument("id") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getInt("id") ?: -1
+                            CatalogoNegocio(navController, idEstablecimiento = id)
+                        }
+
                         composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
                         composable(Pantalla.RUTA_SCANNER_NEGOCIOS) { ScannerNegocios(navController) }
                         composable(Pantalla.RUTA_REGISTROS_NEGOCIOS) { RegistrosNegocios(navController) }
@@ -203,7 +214,7 @@ fun BottomBar(navController: NavHostController, items: List<String>) {
             NavigationBarItem(
                 icon = { Icon(icon, contentDescription = screen) },
                 label = { Text(screen) },
-                selected = currentRoute == screen,
+                selected = currentRoute?.startsWith(screen) == true,
                 onClick = {
                     navController.navigate(screen) {
                         launchSingleTop = true

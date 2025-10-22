@@ -3,12 +3,15 @@ package mx.apb.beneficios_juventud.model.API
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
+import mx.apb.beneficios_juventud.model.API.response.PageResponse
 import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
+import mx.apb.beneficios_juventud.model.API.response.PromocionNetwork
 import mx.apb.beneficios_juventud.model.API.response.SucursalesResponse
 import mx.apb.beneficios_juventud.model.API.response.UbicacionResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -59,5 +62,12 @@ interface ServicioApi {
 
     @POST
     suspend fun publicarOferta()
+
+    @GET("mobile/promociones-establecimiento")
+    suspend fun promocionesPorEstablecimiento(
+        @Query("idEstablecimiento") idEstablecimiento: Int,
+        @Query("page") page: Int = 1,
+        @Query("pageSize") pageSize: Int = 20
+    ): PageResponse<PromocionNetwork>
 
 }

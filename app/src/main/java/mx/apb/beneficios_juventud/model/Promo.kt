@@ -13,8 +13,15 @@ package mx.apb.beneficios_juventud.model
  */
 
 data class Promo(
-    val imagenRes: Int,
+    val id: Int,
     val titulo: String,
-    val descripcion: String,
-    val badge: String
+    val descripcion: String?,
+    val imagenUrl: String?,
+    val vigente: Boolean,
+    val status: String?,
+    val establecimientoNombre: String,
+    val establecimientoLogoUrl: String?,
+    val validFrom: String?,
+    val validTo: String?,
+    val fechaRegistro: String?
 )

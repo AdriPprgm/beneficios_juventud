@@ -25,9 +25,12 @@ import mx.apb.beneficios_juventud.model.API.response.Categoria
 import mx.apb.beneficios_juventud.viewmodel.MenuVM
 
 /**
- * Composable principal que muestra el menú de ofertas.
+ *
  * @author Israel González Huerta
  * @author Juan Pablo Solis Gomez
+ *
+ * Composable principal que muestra el menú de ofertas.
+ *
  *
  * @param navController controlador de navegación para moverse entre pantallas.
  */
@@ -118,11 +121,12 @@ fun Menu(navController: NavHostController, vm: MenuVM = viewModel()) {
 
             items(state.items) { e ->
                 EstablecimientoCard(
+                    id = e.idEstablecimiento,
                     nombre = e.nombre,
                     imagenUrl = e.logoURL,
                     categorias = e.categorias,
                     onClick = {
-                        // pásale el id al detalle si lo requieres
+
                         navController.navigate("${Pantalla.RUTA_CATALOGO}/${e.idEstablecimiento}")
                     }
                 )
@@ -130,43 +134,46 @@ fun Menu(navController: NavHostController, vm: MenuVM = viewModel()) {
         }
     }
 }
-
+/**
+ * Composable que representa una tarjeta visual de un establecimiento dentro del catálogo.
+ *
+ * Esta tarjeta muestra la información principal de un establecimiento, incluyendo su imagen,
+ * nombre y categorías, y permite ejecutar una acción al hacer clic sobre ella.
+ *
+ *
+ * @param id identificador único del establecimiento.
+ * @param nombre nombre del establecimiento a mostrar.
+ * @param imagenUrl URL de la imagen o logotipo del establecimiento (puede ser `null`).
+ * @param categorias lista de nombres de categorías asociadas al establecimiento (por ejemplo, “Café”, “Restaurante”).
+ * @param onClick callback ejecutado cuando el usuario presiona la tarjeta.
+ * Recibe como parámetro el `id` del establecimiento seleccionado.
+ */
 @Composable
 private fun EstablecimientoCard(
+    id: Int,
     nombre: String,
     imagenUrl: String?,
     categorias: List<String>,
-    onClick: () -> Unit
+    onClick: (Int) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable { onClick(id) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-
-            // Imagen desde URL (como antes, ancho completo y alto fijo)
+        Column(Modifier.fillMaxWidth()) {
             AsyncImage(
                 model = imagenUrl,
                 contentDescription = nombre,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
+                modifier = Modifier.fillMaxWidth().height(200.dp),
                 contentScale = ContentScale.Crop
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = nombre,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-
+            Spacer(Modifier.height(8.dp))
+            Text(nombre, style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(horizontal = 8.dp))
             if (categorias.isNotEmpty()) {
                 Text(
-                    text = categorias.joinToString(" • "),
+                    categorias.joinToString(" • "),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
@@ -175,6 +182,14 @@ private fun EstablecimientoCard(
     }
 }
 
+
+/**
+ * Composable que muestra una fila horizontal de filtros de categorías mediante chips interactivos.
+ *
+ * Este componente permite al usuario seleccionar o deseleccionar categorías individuales
+ * para filtrar resultados (por ejemplo, establecimientos o promociones) dentro de la aplicación.
+ * También incluye una opción especial **"Todas"** para seleccionar o limpiar todos los filtros a la vez.
+ */
 @Composable
 fun FiltroCategorias(
     categorias: List<Categoria>,
