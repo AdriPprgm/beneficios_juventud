@@ -8,7 +8,9 @@ import okhttp3.Response
 /**
  * Interceptor que agrega el token JWT a cada solicitud HTTP.
  */
-class AuthInterceptor(private val modelo: BeneficiosJuventud) : Interceptor {
+class AuthInterceptor(
+    private val modelo: BeneficiosJuventud,
+    private val onSessExpired: () -> Unit) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
@@ -24,6 +26,15 @@ class AuthInterceptor(private val modelo: BeneficiosJuventud) : Interceptor {
             .addHeader("Authorization", "Bearer $token")
             .addHeader("Accept", "application/json")
             .build()
+
+        val response = chain.proceed(newRequest)
+
+        // Comprobar si la respuesta es un error 401 (No autorizado)
+        if (response.code == 401) {
+            Log.e("AuthInterceptor", "Token expirado o inválido. Código 401 detectado.")
+            // Invocar el callback para que el ViewModel maneje el logout
+            onSessExpired()
+        }
 
         Log.d("AuthInterceptor", "Token agregado al header")
         return chain.proceed(newRequest)

@@ -21,8 +21,17 @@ object ClienteApi {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    private var onSessExpiredCallback: (() -> Unit)? = null
+
+
     // Interceptor que agrega el token JWT
-    private val authInterceptor = AuthInterceptor(modelo)
+    //private val authInterceptor = AuthInterceptor(modelo)
+
+    private val authInterceptor by lazy {
+        AuthInterceptor(modelo) {
+            onSessExpiredCallback?.invoke()
+        }
+    }
 
     // Cliente HTTP con ambos interceptores
     private val httpClient = OkHttpClient.Builder()
@@ -47,5 +56,9 @@ object ClienteApi {
     //Método para actualizar el token global desde el ViewModel
     fun actualizarToken(token: String?) {
         modelo.setToken(token)
+    }
+
+    fun setSessExpiredCallback(callback: () -> Unit) {
+        onSessExpiredCallback = callback
     }
 }

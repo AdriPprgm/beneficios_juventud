@@ -73,6 +73,28 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
     val scope = rememberCoroutineScope()
     var falla by remember { mutableStateOf(false) }
 
+    if (estado.expiredSess) {
+        AlertDialog(
+            onDismissRequest = { /* No permitir cerrar el diálogo tocando fuera */ },
+            title = { Text("Sesión Expirada") },
+            text = { Text("Tu sesión ha finalizado. Por favor, inicia sesión de nuevo para continuar.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        // Llama a la función del ViewModel para manejar el cierre del diálogo y el logout
+                        beneficiosVM.onSessionExpiredDialogDismissed()
+                        // Navega a la pantalla de login
+                        navController.navigate(Pantalla.RUTA_LOGIN) {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                ) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
     val whiteScheme = lightColorScheme(
         onPrimary = Color.White,
         surface = Color.White,

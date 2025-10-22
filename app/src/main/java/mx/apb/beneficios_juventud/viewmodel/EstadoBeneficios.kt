@@ -5,6 +5,8 @@ data class EstadoBeneficios(
     var contrasena: String = "",
     var credencial: String = "",
 
+    var expiredSess: Boolean = false,
+
     var verifyingSess: Boolean = true,
     var loginSuccess: Boolean = false,
     var LoadingLogin: Boolean = false,

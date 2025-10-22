@@ -39,6 +39,21 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
 
     init{
         verificarSesion()
+        ClienteApi.setSessExpiredCallback {
+            handleSessExpired()
+        }
+    }
+
+    private fun handleSessExpired(){
+        viewModelScope.launch {
+            // Actualiza el estado para notificar a la UI
+            _estado.value = _estado.value.copy(expiredSess = true)
+        }
+    }
+
+    fun onSessionExpiredDialogDismissed() {
+        signOut() // Cierra la sesión completamente
+        _estado.value = _estado.value.copy(expiredSess = false)
     }
 
     /**
