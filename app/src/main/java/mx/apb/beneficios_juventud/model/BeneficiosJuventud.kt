@@ -26,6 +26,10 @@ class BeneficiosJuventud {
     var rol: String? = null
         private set
 
+    var id: Int? = null
+        private set
+
+
     // ---------------------------
     // Autenticación
     // ---------------------------
@@ -67,6 +71,10 @@ class BeneficiosJuventud {
         nombre = nuevoNombre
     }
 
+    fun setId(nuevoId: Int?) {
+        id = nuevoId
+    }
+
     /** Limpia todos los datos al cerrar sesión */
     fun limpiarDatos() {
         correo = ""
@@ -75,6 +83,7 @@ class BeneficiosJuventud {
         nombre = null
         folio = null
         rol = null
+        id = null
     }
 
     override fun toString(): String {

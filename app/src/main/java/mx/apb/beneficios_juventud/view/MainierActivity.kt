@@ -168,7 +168,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                             CatalogoNegocio(navController, idEstablecimiento = id)
                         }
 
-                        composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
+                        composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController, beneficiosVM) }
                         composable(Pantalla.RUTA_SCANNER_NEGOCIOS) { ScannerNegocios(navController) }
                         composable(Pantalla.RUTA_REGISTROS_NEGOCIOS) { RegistrosNegocios(navController) }
                         composable(Pantalla.RUTA_VALIDAR_FOLIO) { ValidarFolio(navController) }

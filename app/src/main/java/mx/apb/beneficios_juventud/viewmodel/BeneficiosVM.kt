@@ -100,6 +100,8 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
     /** Retorna la credencial actualmente almacenada en el estado. */
     fun obtenerCredencial(): String = _estado.value.credencial
 
+    fun obtenerId(): Int? = modelo.id
+
     /**
      * Actualiza el estado de login.
      * @param variableInsana Boolean que indica si el usuario está loggeado.
@@ -188,6 +190,7 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
                 modelo.setRol(response.user?.role)
                 modelo.setNombre(response.user?.nombre)
                 modelo.setFolio(response.user?.folio)
+                modelo.setId(response.user?.id)
 
                 // Actualizar el token global del ClienteApi (para el interceptor)
                 response.token?.let { managerSesion.saveAuthToken(it) }
@@ -285,11 +288,12 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
             if (response.success) {
                 if (response.user?.role == "dueno") {
                     // Guardar datos del usuario en el modelo
-                    modelo.setCorreo(response.user?.email ?: "")
+                    modelo.setCorreo(response.user.email)
                     modelo.setToken(response.token)
-                    modelo.setRol(response.user?.role)
-                    modelo.setNombre(response.user?.nombre)
-                    modelo.setFolio(response.user?.folio)
+                    modelo.setRol(response.user.role)
+                    modelo.setNombre(response.user.nombre)
+                    modelo.setFolio(response.user.folio)
+                    modelo.setId(response.user.id)
 
                     ClienteApi.actualizarToken(response.token)
 

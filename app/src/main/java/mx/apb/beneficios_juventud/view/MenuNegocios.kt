@@ -9,11 +9,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Scanner
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,24 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import mx.apb.beneficios_juventud.R
-
-/**
- * @author: Israel González Huerta
- * Representa una oferta creada por un negocio.
- *
- * @property id Identificador único de la oferta.
- * @property imagenRes Recurso de imagen asociado a la oferta.
- * @property titulo Título o nombre de la oferta.
- * @property descripcion Descripción detallada de la oferta.
- */
-data class OfertaNegocio(
-    val id: Int,
-    val imagenRes: Int,
-    val titulo: String,
-    val descripcion: String
-)
+import mx.apb.beneficios_juventud.model.OfertaNegocio
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
+import mx.apb.beneficios_juventud.viewmodel.NegocioVM
 
 /**
  * Pantalla principal para la gestión de ofertas por parte de los negocios.
@@ -51,21 +47,22 @@ data class OfertaNegocio(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuNegocios(navController: NavController) {
-    var ofertas by remember {
-        mutableStateOf(
-            listOf(
-                OfertaNegocio(1, R.drawable.oferta1, "Six Flags - Pases Anuales", "20% de descuento en tu pase anual al comprar en línea"),
-                OfertaNegocio(2, R.drawable.oferta1, "Six Flags - Comida", "Combo especial en restaurantes participantes por solo $199"),
-                OfertaNegocio(3, R.drawable.oferta1, "Six Flags - Tienda de Recuerdos", "10% de descuento en mercancía oficial con tu pase anual")
-            )
-        )
-    }
+fun MenuNegocios(
+    navController: NavController,
+    beneficiosVM: BeneficiosVM,
+    negocioVM: NegocioVM = viewModel()
+) {
+    val estado by negocioVM.estado.collectAsState()
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
     // 🔹 Estado para saber en qué pantalla estás
     val currentRoute = remember { mutableStateOf(Pantalla.RUTA_MENU_NEGOCIOS) }
+
+    LaunchedEffect(Unit) {
+        val ownerId = beneficiosVM.obtenerId()
+        negocioVM.setIdDuenoYRecargar(ownerId)
+    }
 
     Scaffold(
         topBar = {
@@ -94,11 +91,12 @@ fun MenuNegocios(navController: NavController) {
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(ofertas, key = { it.id }) { oferta ->
+            items(estado.ofertas, key = { it.id }) { oferta ->
                 OfertaNegocioCard(
                     oferta = oferta,
-                    onDelete = { ofertaAEliminar ->
-                        ofertas = ofertas.filterNot { it.id == ofertaAEliminar.id }
+                    onDelete = {
+                        // TODO: Implementar la llamada al ViewModel para eliminar la oferta en el backend
+                        // negocioVM.eliminarOferta(it)
                     },
                     onClick = {
                         navController.navigate(Pantalla.RUTA_OFERTA_POR_FOLIO)
@@ -112,13 +110,8 @@ fun MenuNegocios(navController: NavController) {
         DialogAgregarOferta(
             onDismiss = { mostrarDialogo = false },
             onSave = { titulo, descripcion ->
-                val nueva = OfertaNegocio(
-                    id = ofertas.size + 1,
-                    imagenRes = R.drawable.oferta1,
-                    titulo = titulo,
-                    descripcion = descripcion
-                )
-                ofertas = ofertas + nueva
+                // TODO: Implementar la llamada al ViewModel para guardar la nueva oferta
+                // negocioVM.agregarOferta(titulo, descripcion)
                 mostrarDialogo = false
             }
         )
@@ -179,9 +172,12 @@ fun OfertaNegocioCard(
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Image(
-                painter = painterResource(id = oferta.imagenRes),
+            // --- CHANGE TO AsyncImage TO LOAD FROM URL ---
+            AsyncImage(
+                model = oferta.imagenURL, // Use the URL from the data model
                 contentDescription = oferta.titulo,
+                placeholder = painterResource(id = R.drawable.tarjeta_benefico), // Fallback image
+                error = painterResource(id = R.drawable.tarjeta_benefico),       // Fallback image on error
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
@@ -298,9 +294,9 @@ fun BottomBarNegocios(navController: NavController, currentRoute: String) {
         items.forEach { (label, route) ->
             val icon = when (label) {
                 "Menú" -> Icons.Default.Menu
-                "Scanner" -> Icons.Default.LocationOn
-                "Registros" -> Icons.Default.Notifications
-                "Validar folio" -> Icons.Default.Add
+                "Scanner" -> Icons.Default.QrCodeScanner
+                "Registros" -> Icons.Default.History
+                "Validar folio" -> Icons.Default.Search
                 else -> Icons.Default.Menu
             }
 

@@ -3,6 +3,7 @@ package mx.apb.beneficios_juventud.model.API
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
+import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
 import mx.apb.beneficios_juventud.model.API.response.PageResponse
 import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
 import mx.apb.beneficios_juventud.model.API.response.PromocionNetwork
@@ -57,8 +58,8 @@ interface ServicioApi {
     @GET("mobile/ubicacion-sucursales")
     suspend fun ubicacionSucursales(): UbicacionResponse
 
-    @POST
-    suspend fun ofertasNegocio()
+    @GET("mobile/promociones-establecimiento-dueno")
+    suspend fun ofertasNegocio(@Query ("idDueno") idDueno: Int?): OfertasNegocioResponse
 
     @POST
     suspend fun publicarOferta()
