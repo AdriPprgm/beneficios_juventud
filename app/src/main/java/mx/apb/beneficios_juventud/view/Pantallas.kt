@@ -52,6 +52,8 @@ sealed class Pantalla(
         const val RUTA_MENU_NEGOCIOS = "MenuNegocios"
 
         const val RUTA_TARJETA = "tarjeta_digital"
+        const val RUTA_SCANNER_NEGOCIOS = "ScannerNegocios"
+
 
         /**
          * Lista de rutas que aparecen en la barra inferior (BottomBar)

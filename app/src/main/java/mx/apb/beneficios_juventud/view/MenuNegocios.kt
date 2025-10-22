@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -60,6 +62,9 @@ fun MenuNegocios(navController: NavController) {
 
     var mostrarDialogo by remember { mutableStateOf(false) }
 
+    // 🔹 Estado para saber en qué pantalla estás
+    val currentRoute = remember { mutableStateOf(Pantalla.RUTA_MENU_NEGOCIOS) }
+
     Scaffold(
         topBar = {
             TopBarNegocioMenu("Administrar ofertas")
@@ -75,6 +80,9 @@ fun MenuNegocios(navController: NavController) {
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
+        },
+        bottomBar = {
+            BottomBarNegocios(navController, currentRoute.value)
         }
     ) { innerPadding ->
         LazyColumn(
@@ -111,6 +119,7 @@ fun MenuNegocios(navController: NavController) {
         )
     }
 }
+
 
 /**
  * Barra superior de la pantalla de negocio.
@@ -262,4 +271,36 @@ fun DialogAgregarOferta(
             }
         }
     )
+}
+
+@Composable
+fun BottomBarNegocios(navController: NavController, currentRoute: String) {
+    NavigationBar {
+        val items = listOf(
+            "Menú" to Pantalla.RUTA_MENU_NEGOCIOS,
+            "Scanner" to Pantalla.RUTA_SCANNER_NEGOCIOS // ← debes definir esta ruta
+        )
+
+        items.forEach { (label, route) ->
+            val icon = when (label) {
+                "Menú" -> Icons.Default.Menu
+                "Scanner" -> Icons.Default.LocationOn // puedes cambiarlo por un ícono tipo QR
+                else -> Icons.Default.Menu
+            }
+
+            NavigationBarItem(
+                icon = { Icon(icon, contentDescription = label) },
+                label = { Text(label) },
+                selected = currentRoute == route,
+                onClick = {
+                    if (currentRoute != route) {
+                        navController.navigate(route) {
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }
+            )
+        }
+    }
 }

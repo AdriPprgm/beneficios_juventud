@@ -8,9 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -27,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import kotlinx.coroutines.launch
-import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.view.*
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 
@@ -160,6 +157,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         }
                         composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
                         composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
+                        composable(Pantalla.RUTA_SCANNER_NEGOCIOS) { ScannerNegocios(navController) }
                     }
                 }
             }
