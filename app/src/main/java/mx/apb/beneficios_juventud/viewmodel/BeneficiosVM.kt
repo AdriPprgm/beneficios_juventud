@@ -269,4 +269,58 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
             Log.d("AUTH_STATE", "User signed out. loginSuccess is now false. Token cleared")
         }
     }
+
+    suspend fun LoginNegocio(){
+        val request = LoginRequest(
+            email = obtenerCredencial(),
+            password = obtenerContrasena()
+        )
+
+        _estado.value = _estado.value.copy(LoadingLogin = true)
+
+        try {
+            val response = ClienteApi.service.login(request)
+            Log.d("API_TEST", "Success: ${response.success}, Message: ${response.message}")
+
+            if (response.success) {
+                if (response.user?.role == "dueno") {
+                    // Guardar datos del usuario en el modelo
+                    modelo.setCorreo(response.user?.email ?: "")
+                    modelo.setToken(response.token)
+                    modelo.setRol(response.user?.role)
+                    modelo.setNombre(response.user?.nombre)
+                    modelo.setFolio(response.user?.folio)
+
+                    ClienteApi.actualizarToken(response.token)
+
+                    // Logs de depuración
+                    Log.d(
+                        "BUSINESS_SESSION", """
+                        Sesión iniciada correctamente
+                        Correo: ${modelo.correo}
+                        Rol: ${modelo.rol}
+                        Token: ${modelo.token?.take(40)}... (truncado)
+                    """.trimIndent()
+                    )
+
+                    // Actualizar estado de login
+                    _estado.value = _estado.value.copy(loginBusiness = true)
+
+
+                } else {
+                    Log.w("API_TEST", "El usuario no es un negocio, no se puede iniciar sesión.")
+                    _estado.value = _estado.value.copy(loginBusiness = false)
+                }
+            } else {
+                Log.w("API_TEST", "Login fallido: ${response.message}")
+                _estado.value = _estado.value.copy(loginBusiness = false)
+            }
+
+        } catch (e: Exception) {
+            Log.e("API_TEST", "Error durante login: ${e.message}", e)
+            _estado.value = _estado.value.copy(loginBusiness = false)
+        } finally {
+            _estado.value = _estado.value.copy(LoadingLogin = false)
+        }
+    }
 }

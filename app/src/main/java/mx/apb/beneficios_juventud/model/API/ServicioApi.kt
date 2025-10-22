@@ -54,4 +54,10 @@ interface ServicioApi {
     @GET("mobile/ubicacion-sucursales")
     suspend fun ubicacionSucursales(): UbicacionResponse
 
+    @POST
+    suspend fun ofertasNegocio()
+
+    @POST
+    suspend fun publicarOferta()
+
 }

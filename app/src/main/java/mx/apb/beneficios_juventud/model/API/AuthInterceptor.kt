@@ -47,6 +47,6 @@ class AuthInterceptor(
         }
 
         Log.d("AuthInterceptor", "Token agregado al header")
-        return chain.proceed(newRequest)
+        return response
     }
 }

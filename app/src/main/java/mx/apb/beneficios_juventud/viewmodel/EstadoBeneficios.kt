@@ -12,6 +12,7 @@ data class EstadoBeneficios(
     var verifyingSess: Boolean = true,
     var loginSuccess: Boolean = false,
     var LoadingLogin: Boolean = false,
+    var loginBusiness: Boolean = false,
 
     var mensajeError: String = "", // DESPUES AGREGAMOS FUNCIONALIDAD A ESTE VALOR
 
