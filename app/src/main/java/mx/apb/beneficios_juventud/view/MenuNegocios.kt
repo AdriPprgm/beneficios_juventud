@@ -13,9 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -60,7 +62,7 @@ fun MenuNegocios(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Administrar Ofertas") })
+            TopBarNegocioMenu("Administrar ofertas")
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -109,6 +111,40 @@ fun MenuNegocios(navController: NavController) {
         )
     }
 }
+
+/**
+ * Barra superior de la pantalla de negocio.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopBarNegocioMenu(
+    title: String
+) {
+    Column {
+        TopAppBar(
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,          // Fondo blanco
+                titleContentColor = Color.Black,       // Texto negro
+                navigationIconContentColor = Color.Black,
+                actionIconContentColor = Color.Black
+            )
+        )
+        Divisor()
+    }
+}
+
 
 /**
  * Tarjeta visual que muestra la información de una oferta creada por el negocio.
