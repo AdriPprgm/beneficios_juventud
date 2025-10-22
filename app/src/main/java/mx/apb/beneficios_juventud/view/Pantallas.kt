@@ -53,6 +53,12 @@ sealed class Pantalla(
 
         const val RUTA_TARJETA = "tarjeta_digital"
         const val RUTA_SCANNER_NEGOCIOS = "ScannerNegocios"
+        const val RUTA_REGISTROS_NEGOCIOS = "RegistrosNegocios"
+        const val RUTA_VALIDAR_FOLIO = "ValidarFolio"
+        const val RUTA_OFERTA_POR_FOLIO = "OfertaPorFolio"
+
+
+
 
 
         /**

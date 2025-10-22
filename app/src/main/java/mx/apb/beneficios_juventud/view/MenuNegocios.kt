@@ -1,6 +1,7 @@
 package mx.apb.beneficios_juventud.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -97,6 +99,9 @@ fun MenuNegocios(navController: NavController) {
                     oferta = oferta,
                     onDelete = { ofertaAEliminar ->
                         ofertas = ofertas.filterNot { it.id == ofertaAEliminar.id }
+                    },
+                    onClick = {
+                        navController.navigate(Pantalla.RUTA_OFERTA_POR_FOLIO)
                     }
                 )
             }
@@ -126,7 +131,7 @@ fun MenuNegocios(navController: NavController) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBarNegocioMenu(
+fun TopBarNegocioMenu(
     title: String
 ) {
     Column {
@@ -156,15 +161,21 @@ private fun TopBarNegocioMenu(
 
 
 /**
- * Tarjeta visual que muestra la información de una oferta creada por el negocio.
+ * Tarjeta visual que muestra la información de una oferta creada po r el negocio.
  *
  * @param oferta Objeto [OfertaNegocio] con los datos de la oferta.
  * @param onDelete Acción ejecutada cuando el usuario selecciona eliminar una oferta.
  */
 @Composable
-fun OfertaNegocioCard(oferta: OfertaNegocio, onDelete: (OfertaNegocio) -> Unit) {
+fun OfertaNegocioCard(
+    oferta: OfertaNegocio,
+    onDelete: (OfertaNegocio) -> Unit,
+    onClick: (OfertaNegocio) -> Unit
+) {
     ElevatedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick(oferta) }, // Hacer clickable toda la tarjeta
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
@@ -205,6 +216,7 @@ fun OfertaNegocioCard(oferta: OfertaNegocio, onDelete: (OfertaNegocio) -> Unit) 
         }
     }
 }
+
 
 /**
  * Cuadro de diálogo para agregar una nueva oferta.
@@ -278,13 +290,17 @@ fun BottomBarNegocios(navController: NavController, currentRoute: String) {
     NavigationBar {
         val items = listOf(
             "Menú" to Pantalla.RUTA_MENU_NEGOCIOS,
-            "Scanner" to Pantalla.RUTA_SCANNER_NEGOCIOS // ← debes definir esta ruta
+            "Scanner" to Pantalla.RUTA_SCANNER_NEGOCIOS,
+            "Registros" to Pantalla.RUTA_REGISTROS_NEGOCIOS,
+            "Validar folio" to Pantalla.RUTA_VALIDAR_FOLIO
         )
 
         items.forEach { (label, route) ->
             val icon = when (label) {
                 "Menú" -> Icons.Default.Menu
-                "Scanner" -> Icons.Default.LocationOn // puedes cambiarlo por un ícono tipo QR
+                "Scanner" -> Icons.Default.LocationOn
+                "Registros" -> Icons.Default.Notifications
+                "Validar folio" -> Icons.Default.Add
                 else -> Icons.Default.Menu
             }
 

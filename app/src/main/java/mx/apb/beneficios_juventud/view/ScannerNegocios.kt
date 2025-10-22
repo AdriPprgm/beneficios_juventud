@@ -97,17 +97,26 @@ fun ScannerNegocios(navController: NavController) {
             }
 
             // Si se detectó un QR, lo procesamos
-            if (resultado.isNotEmpty()) {
-                try {
-                    val datos = JSONObject(resultado)
-                    val userId = datos.getInt("userId")
-                    val idPromocion = datos.getString("idPromocion")
-                    val timestamp = datos.getLong("timestamp")
-                    val expirationTime = datos.getLong("expirationTime")
+            var navegacionRealizada by remember { mutableStateOf(false) }
 
-                    println("ID Usuario: $userId, ID Promoción: $idPromocion, Timestamp: $timestamp, Expira: $expirationTime")
-                } catch (e: Exception) {
-                    println("No se pudo parsear el QR: ${e.message}")
+            LaunchedEffect(resultado) {
+                if (resultado.isNotEmpty() && !navegacionRealizada) {
+                    try {
+                        val datos = JSONObject(resultado)
+                        val userId = datos.getInt("userId")
+                        val idPromocion = datos.getString("idPromocion")
+                        val timestamp = datos.getLong("timestamp")
+                        val expirationTime = datos.getLong("expirationTime")
+
+                        println("ID Usuario: $userId, ID Promoción: $idPromocion, Timestamp: $timestamp, Expira: $expirationTime")
+
+                        // Solo navegar una vez
+                        navController.navigate(Pantalla.RUTA_REGISTROS_NEGOCIOS)
+                        navegacionRealizada = true
+
+                    } catch (e: Exception) {
+                        println("No se pudo parsear el QR: ${e.message}")
+                    }
                 }
             }
         }

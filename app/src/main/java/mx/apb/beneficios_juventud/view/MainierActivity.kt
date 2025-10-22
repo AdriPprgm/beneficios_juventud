@@ -1,5 +1,6 @@
 package mx.apb.beneficios_juventud
 
+import RegistrosNegocios
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -158,6 +159,9 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
                         composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController) }
                         composable(Pantalla.RUTA_SCANNER_NEGOCIOS) { ScannerNegocios(navController) }
+                        composable(Pantalla.RUTA_REGISTROS_NEGOCIOS) { RegistrosNegocios(navController) }
+                        composable(Pantalla.RUTA_VALIDAR_FOLIO) { ValidarFolio(navController) }
+                        composable(Pantalla.RUTA_OFERTA_POR_FOLIO) { OfertaPorFolio(navController) }
                     }
                 }
             }
