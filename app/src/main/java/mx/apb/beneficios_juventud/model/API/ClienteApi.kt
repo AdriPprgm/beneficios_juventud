@@ -53,7 +53,7 @@ object ClienteApi {
         retrofit.create(ServicioApi::class.java)
     }
 
-    //Método para actualizar el token global desde el ViewModel
+    //Función para actualizar el token global desde el ViewModel
     fun actualizarToken(token: String?) {
         modelo.setToken(token)
     }

@@ -18,7 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.viewmodel.ScannerVM
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,20 +32,17 @@ fun ScannerNegocios(navController: NavController) {
     var tienePermisoCamara by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+    val scannerVM: ScannerVM = viewModel() // Instanciamos el ViewModel
+    val scope = rememberCoroutineScope()   // Para lanzar corutinas desde Compose
 
-    // Launcher para pedir el permiso de cámara
     val pedirPermisoCamara = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         tienePermisoCamara = isGranted
     }
 
-    // Verificar y solicitar permiso al abrir la pantalla
     LaunchedEffect(Unit) {
-        val permisoActual = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.CAMERA
-        )
+        val permisoActual = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
         if (permisoActual == PackageManager.PERMISSION_GRANTED) {
             tienePermisoCamara = true
         } else {
@@ -55,10 +55,7 @@ fun ScannerNegocios(navController: NavController) {
             Column {
                 TopAppBar(
                     title = {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                             Text("Escanear código", fontSize = 20.sp)
                         }
                     },
@@ -74,20 +71,14 @@ fun ScannerNegocios(navController: NavController) {
             BottomBarNegocios(navController, currentRoute)
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.padding(innerPadding), contentAlignment = Alignment.Center) {
             when {
                 tienePermisoCamara -> {
-                    // Mostrar cámara si ya hay permiso
                     ScannerView { qrValue ->
                         resultado = qrValue
                     }
                 }
-
                 else -> {
-                    // Mostrar mensaje mientras no hay permiso
                     Text(
                         text = "Se necesita permiso de cámara para escanear códigos",
                         color = Color.Gray,
@@ -96,21 +87,27 @@ fun ScannerNegocios(navController: NavController) {
                 }
             }
 
-            // Si se detectó un QR, lo procesamos
             var navegacionRealizada by remember { mutableStateOf(false) }
 
             LaunchedEffect(resultado) {
                 if (resultado.isNotEmpty() && !navegacionRealizada) {
                     try {
                         val datos = JSONObject(resultado)
-                        val userId = datos.getInt("userId")
+                        val userId = datos.getInt("userId").toString()
                         val idPromocion = datos.getString("idPromocion")
-                        val timestamp = datos.getLong("timestamp")
-                        val expirationTime = datos.getLong("expirationTime")
+                        val timestamp = datos.getLong("timestamp").toString()
+                        val expirationTime = datos.getLong("expirationTime").toString()
 
                         println("ID Usuario: $userId, ID Promoción: $idPromocion, Timestamp: $timestamp, Expira: $expirationTime")
 
-                        // Solo navegar una vez
+                        // Actualizamos el VM
+                        scannerVM.actualizarDatosQR(userId, idPromocion, timestamp, expirationTime)
+
+                        // Llamamos a Scaneo y mostramos el status en Logcat
+                        scope.launch {
+                            scannerVM.Scaneo() // Esto imprimirá ✅ o ⚠️ según el response
+                        }
+
                         navController.navigate(Pantalla.RUTA_REGISTROS_NEGOCIOS)
                         navegacionRealizada = true
 
