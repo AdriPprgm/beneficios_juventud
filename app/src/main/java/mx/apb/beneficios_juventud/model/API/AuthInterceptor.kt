@@ -4,6 +4,7 @@ import android.util.Log
 import mx.apb.beneficios_juventud.model.BeneficiosJuventud
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 
 /**
  * Interceptor que agrega el token JWT a cada solicitud HTTP.
@@ -32,8 +33,17 @@ class AuthInterceptor(
         // Comprobar si la respuesta es un error 401 (No autorizado)
         if (response.code == 401) {
             Log.e("AuthInterceptor", "Token expirado o inválido. Código 401 detectado.")
-            // Invocar el callback para que el ViewModel maneje el logout
+
+            // 1. Invocar el callback para que el ViewModel maneje el logout y muestre el diálogo.
             onSessExpired()
+
+            // 2. Detener la cadena de respuesta para evitar que la excepción llegue a la UI.
+            // Devolvemos una respuesta "falsa" pero válida para que la app no crashee.
+            // Esto es crucial para evitar que la excepción se propague.
+            return response.newBuilder()
+                .code(200) // Cambiamos el código a uno no-erróneo.
+                .body("{\"message\":\"Session expired\"}".toResponseBody(null)) // Cuerpo de respuesta genérico.
+                .build()
         }
 
         Log.d("AuthInterceptor", "Token agregado al header")
