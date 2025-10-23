@@ -5,12 +5,14 @@ import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.request.ScannerRequest
 import mx.apb.beneficios_juventud.model.API.response.AgregarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
+import mx.apb.beneficios_juventud.model.API.response.FolioResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
 import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
 import mx.apb.beneficios_juventud.model.API.response.PageResponse
 import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
 import mx.apb.beneficios_juventud.model.API.response.PromocionNetwork
 import mx.apb.beneficios_juventud.model.API.response.QrResponse
+import mx.apb.beneficios_juventud.model.API.response.RegistrosResponse
 import mx.apb.beneficios_juventud.model.API.response.ScannerResponse
 import mx.apb.beneficios_juventud.model.API.response.SucursalesResponse
 import mx.apb.beneficios_juventud.model.API.response.UbicacionResponse
@@ -49,6 +51,16 @@ interface ServicioApi {
 
     @POST("mobile/verificar-qr")
     suspend fun scanner(@Body request: ScannerRequest): retrofit2.Response<ScannerResponse>
+
+    // Obtener nombre y edad del usuario a partir de su folio
+    @GET("mobile/validar-folio")
+    suspend fun validarFolio(
+        @Query("folio") folio: String
+    ): retrofit2.Response<FolioResponse>
+
+    @GET("mobile/registro-canje")
+    suspend fun registroCanje(): RegistrosResponse
+
 
 
     @GET("mobile/establecimientos")

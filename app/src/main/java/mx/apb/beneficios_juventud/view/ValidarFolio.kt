@@ -8,30 +8,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.viewmodel.FolioVM
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ValidarFolio(navController: NavController) {
     val currentRoute = Pantalla.RUTA_VALIDAR_FOLIO
-    var folio by remember { mutableStateOf("") }    // Estado para folio
-    var nombre by remember { mutableStateOf("Juan Pérez") }   // Ejemplo de nombre
-    var edad by remember { mutableStateOf("25") }     // Ejemplo de edad
+    var folio by remember { mutableStateOf("") }
+    val folioVM: FolioVM = viewModel()
+    val estado by folioVM.estado.collectAsState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
-        topBar = {
-            TopBarNegocioMenu("Validar folio")
-        },
-        bottomBar = {
-            BottomBarNegocios(navController, currentRoute)
-        }
+        topBar = { TopBarNegocioMenu("Validar folio") },
+        bottomBar = { BottomBarNegocios(navController, currentRoute) }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -43,7 +45,6 @@ fun ValidarFolio(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(16.dp)
             ) {
-                // Campo de búsqueda de folio
                 OutlinedTextField(
                     value = folio,
                     onValueChange = { folio = it },
@@ -54,7 +55,11 @@ fun ValidarFolio(navController: NavController) {
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 Button(
-                    onClick = { /* Por ahora no hace nada */ },
+                    onClick = {
+                        scope.launch {
+                            folioVM.buscarFolio(folio)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Buscar")
@@ -62,57 +67,23 @@ fun ValidarFolio(navController: NavController) {
 
                 Spacer(modifier = Modifier.padding(16.dp))
 
-                // Sección con relieve para los datos del beneficiario (solo lectura)
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.elevatedCardColors(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Datos del beneficiario",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        Text("Datos del beneficiario", style = MaterialTheme.typography.titleMedium)
 
-                        // Nombre (solo lectura)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Nombre: ",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text(
-                                text = nombre,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(2f)
-                            )
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                            Text("Nombre: ", modifier = Modifier.weight(1f))
+                            Text(estado.nombre, modifier = Modifier.weight(2f))
                         }
 
-                        // Edad (solo lectura)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Edad: ",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text(
-                                text = edad,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(2f)
-                            )
+                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                            Text("Edad: ", modifier = Modifier.weight(1f))
+                            Text(estado.edad, modifier = Modifier.weight(2f))
                         }
                     }
                 }
