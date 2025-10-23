@@ -169,12 +169,20 @@ fun TopBarNegocioMenu(
  * @param oferta Objeto [OfertaNegocio] con los datos de la oferta.
  * @param onDelete Acción ejecutada cuando el usuario selecciona eliminar una oferta.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OfertaNegocioCard(
     oferta: OfertaNegocio,
     onDelete: (OfertaNegocio) -> Unit,
-    onClick: (OfertaNegocio) -> Unit
+    onClick: (OfertaNegocio) -> Unit,
 ) {
+    var mostrarConfirmacion by remember { mutableStateOf(false) }
+    if (mostrarConfirmacion) {
+        ConfirmarEliminacion(
+            onDismiss = { mostrarConfirmacion = false },
+            onConfirm = { onDelete(oferta) }
+        )
+    }
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,7 +220,7 @@ fun OfertaNegocioCard(
             Spacer(Modifier.height(8.dp))
 
             OutlinedButton(
-                onClick = { onDelete(oferta) },
+                onClick = { mostrarConfirmacion = true },
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Icon(Icons.Default.Delete, contentDescription = "Eliminar")
@@ -436,4 +444,15 @@ fun BottomBarNegocios(navController: NavController, currentRoute: String) {
             )
         }
     }
+}
+
+@Composable
+fun ConfirmarEliminacion(onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { TextButton(onClick = onConfirm) { Text("Eliminar Oferta", color = Color.Red) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Regresar") } },
+        title = { Text("Aviso") },
+        text = { Text("¿Estas seguro de que quieres eliminar esta oferta?") }
+    )
 }
