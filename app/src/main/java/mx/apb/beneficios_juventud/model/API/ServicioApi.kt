@@ -46,7 +46,8 @@ interface ServicioApi {
     suspend fun obtenerCategorias(): CategoriasResponse
 
     @POST("mobile/verificar-qr")
-    suspend fun scanner(@Body request: ScannerRequest): ScannerResponse
+    suspend fun scanner(@Body request: ScannerRequest): retrofit2.Response<ScannerResponse>
+
 
     @GET("mobile/establecimientos")
     suspend fun listarEstablecimientos(

@@ -4,5 +4,6 @@ data class ScannerRequest(
     val userId: String,
     val idPromocion: String,
     val timestamp: String,
-    val expirationTime: String
+    val expirationTime: String,
+    val idDueno: String
 )

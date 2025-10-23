@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.model.API.request.ScannerRequest
+import mx.apb.beneficios_juventud.model.API.response.ScannerResponse
 
 class ScannerVM(application: Application) : AndroidViewModel(application) {
 
@@ -17,15 +18,19 @@ class ScannerVM(application: Application) : AndroidViewModel(application) {
         userId: String? = null,
         idPromocion: String? = null,
         timestamp: String? = null,
-        expirationTime: String? = null
+        expirationTime: String? = null,
+        idDueno: String? = null
     ) {
         _estado.value = _estado.value.copy(
             userId = userId ?: _estado.value.userId,
             idPromocion = idPromocion ?: _estado.value.idPromocion,
             timestamp = timestamp ?: _estado.value.timestamp,
-            expirationTime = expirationTime ?: _estado.value.expirationTime
+            expirationTime = expirationTime ?: _estado.value.expirationTime,
+            idDueno = idDueno ?: _estado.value.idDueno
+
         )
     }
+
 
     // Llama al endpoint scanner
     suspend fun Scaneo() {
@@ -33,19 +38,27 @@ class ScannerVM(application: Application) : AndroidViewModel(application) {
             userId = _estado.value.userId,
             idPromocion = _estado.value.idPromocion,
             timestamp = _estado.value.timestamp,
-            expirationTime = _estado.value.expirationTime
+            expirationTime = _estado.value.expirationTime,
+            idDueno = _estado.value.idDueno
         )
 
         try {
-            val response = ClienteApi.service.scanner(request)
-            if (response.status == 200) {
-                println("✅ Escaneo exitoso")
+            val response: retrofit2.Response<ScannerResponse> = ClienteApi.service.scanner(request)
+
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null && body.success) {
+                    println("✅ Escaneo exitoso: ${body.message}")
+                } else {
+                    println("⚠️ Escaneo fallido: ${body?.message ?: "Body vacío"}")
+                }
             } else {
-                println("⚠️ Escaneo fallido, status = ${response.status}")
+                println("⚠️ Error HTTP: ${response.code()}")
             }
 
         } catch (e: Exception) {
             println("❌ Error al hacer la solicitud: ${e.message}")
         }
     }
+
 }

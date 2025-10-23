@@ -21,12 +21,14 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 import mx.apb.beneficios_juventud.viewmodel.ScannerVM
 import org.json.JSONObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScannerNegocios(navController: NavController) {
+fun ScannerNegocios(navController: NavController,
+                    modelo: BeneficiosVM) {
     val currentRoute = Pantalla.RUTA_SCANNER_NEGOCIOS
     var resultado by remember { mutableStateOf("") }
     var tienePermisoCamara by remember { mutableStateOf(false) }
@@ -98,10 +100,20 @@ fun ScannerNegocios(navController: NavController) {
                         val timestamp = datos.getLong("timestamp").toString()
                         val expirationTime = datos.getLong("expirationTime").toString()
 
+
                         println("ID Usuario: $userId, ID Promoción: $idPromocion, Timestamp: $timestamp, Expira: $expirationTime")
 
                         // Actualizamos el VM
-                        scannerVM.actualizarDatosQR(userId, idPromocion, timestamp, expirationTime)
+                        scannerVM.actualizarDatosQR(
+                            // userId = userId.toString(),
+                            userId = userId,
+                            idPromocion = idPromocion,
+                            // timestamp = timestamp.toString(),
+                            timestamp = timestamp,
+                            // expirationTime = expirationTime.toString(),
+                            expirationTime = expirationTime,
+                            idDueno = modelo.obtenerId().toString()
+                        )
 
                         // Llamamos a Scaneo y mostramos el status en Logcat
                         scope.launch {
