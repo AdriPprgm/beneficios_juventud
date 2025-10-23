@@ -10,6 +10,7 @@ import mx.apb.beneficios_juventud.model.API.response.EliminarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.FolioResponse
 import mx.apb.beneficios_juventud.model.API.response.ForgotResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
+import mx.apb.beneficios_juventud.model.API.response.NotificacionesResponse
 import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
 import mx.apb.beneficios_juventud.model.API.response.PageResponse
 import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
@@ -64,6 +65,10 @@ interface ServicioApi {
 
     @GET("mobile/registro-canje")
     suspend fun registroCanje(): RegistrosResponse
+
+    @GET("mobile/notificaciones")
+    suspend fun obtenerNotificaciones(): NotificacionesResponse
+
 
 
 

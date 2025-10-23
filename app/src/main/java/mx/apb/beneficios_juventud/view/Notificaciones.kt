@@ -1,6 +1,5 @@
 package mx.apb.beneficios_juventud.view
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,8 +8,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,11 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import mx.apb.beneficios_juventud.model.API.ClienteApi
-import mx.apb.beneficios_juventud.model.Notificacion
+import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 import mx.apb.beneficios_juventud.viewmodel.MenuVM
+import mx.apb.beneficios_juventud.viewmodel.NotificacionUI
+import mx.apb.beneficios_juventud.viewmodel.NotificacionesVM
 
 /**
  * Composable principal que muestra la lista de notificaciones del usuario.
@@ -36,16 +38,22 @@ import mx.apb.beneficios_juventud.viewmodel.MenuVM
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM, vm: MenuVM = viewModel(), perfil: PerfilUsuario?) {
+fun Avisos(
+    navController: NavHostController,
+    beneficiosVM: BeneficiosVM,
+    vm: MenuVM = viewModel(),
+    perfil: PerfilUsuario?,
+    notificacionesVM: NotificacionesVM = viewModel()
+) {
+    val estado by notificacionesVM.estado.collectAsState()
+    val scope = rememberCoroutineScope()
 
-    val notificaciones = listOf(
-        Notificacion("¡Six Flags 2x1!", "Promoción especial para beneficiarios. Válida hasta 31 de diciembre.", "20 Nov 2025", "Entretenimiento"),
-        Notificacion("Farmacias Guadalajara 15% Dcto.", "Aprovecha el 15% de descuento en medicamentos seleccionados.", "18 Nov 2025", "Salud"),
-        Notificacion("Cinépolis: Entrada al 2x1", "Disfruta de tus películas favoritas con 2x1 en entradas.", "15 Nov 2025", "Entretenimiento"),
-        Notificacion("Nuevo Beneficio: Little Caesars", "Pizza grande por solo $99 MXN. ¡No te lo pierdas!", "10 Nov 2025", "Comida"),
-        Notificacion("Sally Beauty: 20% en productos", "Renueva tu look con este increíble descuento en Sally Beauty.", "05 Nov 2025", "Belleza"),
-        Notificacion("Librerías Gandhi: 10% en libros", "Fomenta la lectura con descuentos en todas las sucursales Gandhi.", "01 Nov 2025", "Educación")
-    )
+    // Cargar una vez al abrir la pantalla
+    LaunchedEffect(Unit) {
+        scope.launch {
+            notificacionesVM.cargarNotificaciones()
+        }
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -65,12 +73,13 @@ fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM, vm: Men
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(notificaciones.size) { idx ->
-                NotificationCard(notificacion = notificaciones[idx])
+            items(estado.notificaciones.size) { idx ->
+                NotificationCard(notificacion = estado.notificaciones[idx])
             }
         }
     }
 }
+
 
 /**
  * Barra superior de la pantalla de notificaciones.
@@ -146,23 +155,19 @@ private fun TopBarAvisos(
  * @param notificacion Objeto [Notif] con los datos de la notificación.
  */
 @Composable
-private fun NotificationCard(notificacion: Notificacion) {
+private fun NotificationCard(notificacion: NotificacionUI) {
     ElevatedCard(
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
-            // Encabezado con título y fecha
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-                Spacer(Modifier.width(10.dp))
-
+            Row(verticalAlignment = Alignment.Top) {
+                // ✅ Título con wrapping
                 Text(
                     text = notificacion.titulo,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    // se eliminan maxLines y overflow para permitir salto de línea
                 )
 
                 Spacer(Modifier.width(10.dp))
@@ -170,35 +175,18 @@ private fun NotificationCard(notificacion: Notificacion) {
                 Text(
                     text = notificacion.fecha,
                     style = MaterialTheme.typography.labelSmall.copy(color = Color(0xFF8F8F8F)),
-                    maxLines = 1
+                    textAlign = TextAlign.End
                 )
             }
 
             Spacer(Modifier.height(8.dp))
 
-            // Descripción de la notificación
             Text(
                 text = notificacion.descripcion,
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF5B5B5B)),
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
-
-            Spacer(Modifier.height(10.dp))
-
-            // Badge con categoría de la notificación
-            AssistChip(
-                onClick = {  },
-                label = { Text(notificacion.badge, style = MaterialTheme.typography.labelMedium) },
-                shape = RoundedCornerShape(percent = 50),
-                border = BorderStroke(1.dp, Color(0xFFB39DDB)),
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = Color(0xFFF6F2FF),
-                    labelColor = Color(0xFF6A1B9A)
-                )
-            )
         }
     }
 }
-
-
