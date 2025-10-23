@@ -106,6 +106,9 @@ fun Perfil(
                 val perfil = s.perfil
                 val historial = s.historial
                 val detalle: mx.apb.beneficios_juventud.model.BeneficiarioDetalle? = null
+                LaunchedEffect(perfil) {
+                    beneficiosVM.setPerfil(perfil)
+                }
                 PerfilContent(
                     modifier = Modifier.padding(innerPadding),
                     perfil = perfil,

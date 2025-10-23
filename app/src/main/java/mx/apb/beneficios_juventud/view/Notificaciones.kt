@@ -16,13 +16,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.model.Notificacion
+import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
+import mx.apb.beneficios_juventud.viewmodel.MenuVM
 
 /**
  * Composable principal que muestra la lista de notificaciones del usuario.
@@ -32,7 +36,7 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM) {
+fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM, vm: MenuVM = viewModel(), perfil: PerfilUsuario?) {
 
     val notificaciones = listOf(
         Notificacion("¡Six Flags 2x1!", "Promoción especial para beneficiarios. Válida hasta 31 de diciembre.", "20 Nov 2025", "Entretenimiento"),
@@ -48,7 +52,8 @@ fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM) {
         topBar = {
             TopBarAvisos(
                 title = "Notificaciones",
-                navController = navController
+                navController = navController,
+                perfil = perfil
             )
         }
     ) { inner ->
@@ -91,7 +96,8 @@ fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM) {
 @Composable
 private fun TopBarAvisos(
     title: String,
-    navController: NavHostController
+    navController: NavHostController,
+    vm: MenuVM = viewModel(), perfil: PerfilUsuario?
 ) {
     Column {
         TopAppBar(
@@ -116,17 +122,25 @@ private fun TopBarAvisos(
                 }
             },
             actions = {
-                // Ícono de perfil clickable
+                // Ícono de perfil clickable a la derecha
                 Box(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFE0E0E0))
+                        .background(MaterialTheme.colorScheme.primary)
                         .clickable {
                             navController.navigate(Pantalla.RUTA_PERFIL)
-                        }
-                )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = perfil?.name?.firstOrNull()?.uppercase() ?: "U",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Center
+                    )
+                }
             },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.White,

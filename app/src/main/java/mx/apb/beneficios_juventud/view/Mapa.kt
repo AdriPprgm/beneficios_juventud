@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -33,7 +34,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
+import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
+import mx.apb.beneficios_juventud.viewmodel.MenuVM
 
 /**
  * @author:
@@ -44,7 +47,7 @@ import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
+fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController, vm: MenuVM = viewModel(), perfil: PerfilUsuario?) {
     val estado by beneficiosVM.estado.collectAsState()
 
     // Cargar sucursales al entrar
@@ -112,14 +115,26 @@ fun Mapa(beneficiosVM: BeneficiosVM, navController: NavHostController) {
                         modifier = Modifier.align(Alignment.Center)
                     )
 
+                    // Ícono de perfil clickable a la derecha
                     Box(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
+                            .padding(end = 2.dp)
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFE0E0E0))
-                            .clickable { navController.navigate(Pantalla.RUTA_PERFIL) }
-                    )
+                            .background(MaterialTheme.colorScheme.primary)
+                            .clickable {
+                                navController.navigate(Pantalla.RUTA_PERFIL)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = perfil?.name?.firstOrNull()?.uppercase() ?: "U",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
                 // Buscador con sugerencias

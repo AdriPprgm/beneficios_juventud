@@ -16,6 +16,7 @@ import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.response.UbicacionResponse
 import mx.apb.beneficios_juventud.model.ManagerSesion
+import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.model.PinMapa
 import mx.apb.beneficios_juventud.model.Sucursal
 
@@ -326,5 +327,12 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
         } finally {
             _estado.value = _estado.value.copy(LoadingLogin = false)
         }
+    }
+
+    private val _perfil = MutableStateFlow<PerfilUsuario?>(null)
+    val perfil: StateFlow<PerfilUsuario?> = _perfil
+
+    fun setPerfil(p: PerfilUsuario?) {
+        _perfil.value = p
     }
 }

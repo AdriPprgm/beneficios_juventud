@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import mx.apb.beneficios_juventud.model.API.response.Categoria
+import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.viewmodel.MenuVM
 
 /**
@@ -35,7 +36,7 @@ import mx.apb.beneficios_juventud.viewmodel.MenuVM
  * @param navController controlador de navegación para moverse entre pantallas.
  */
 @Composable
-fun Menu(navController: NavHostController, vm: MenuVM = viewModel()) {
+fun Menu(navController: NavHostController, vm: MenuVM = viewModel(), perfil: PerfilUsuario?) {
     val state by vm.state.collectAsState()
 
     Scaffold(
@@ -53,6 +54,8 @@ fun Menu(navController: NavHostController, vm: MenuVM = viewModel()) {
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
                 ) {
+                    Spacer(modifier = Modifier.width(72.dp))
+
                     // Título centrado
                     Text(
                         text = "Menú principal",
@@ -62,17 +65,28 @@ fun Menu(navController: NavHostController, vm: MenuVM = viewModel()) {
                         modifier = Modifier.align(Alignment.Center)
                     )
 
+                    Spacer(modifier = Modifier.width(40.dp))
+
                     // Ícono de perfil clickable a la derecha
                     Box(
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
+                            .padding(end = 12.dp)
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFE0E0E0))
+                            .background(MaterialTheme.colorScheme.primary)
                             .clickable {
                                 navController.navigate(Pantalla.RUTA_PERFIL)
-                            }
-                    )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = perfil?.name?.firstOrNull()?.uppercase() ?: "U",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
                 // Campo de búsqueda

@@ -65,6 +65,8 @@ class MainActivity : ComponentActivity() {
  */
 @Composable
 fun MainScreen(beneficiosVM: BeneficiosVM) {
+    val perfil by beneficiosVM.perfil.collectAsState()
+
     val navController = rememberNavController()
     val bottomBarItems = Pantalla.pantallasBottomBar
     val estado by beneficiosVM.estado.collectAsState()
@@ -132,7 +134,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                     NavHost(
                         navController = navController,
                         startDestination = startDest,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         composable(Pantalla.RUTA_LOGIN) {
                             Login(
@@ -151,9 +153,10 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         composable(Pantalla.RUTA_OLVIDASTE) {
                             Olvidaste(beneficiosVM, navController)
                         }
-                        composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM, navController) }
-                        composable(Pantalla.RUTA_MENU) { Menu(navController) }
-                        composable(Pantalla.RUTA_AVISOS) { Avisos(navController, beneficiosVM) }
+
+                        composable(Pantalla.RUTA_MAPA) { Mapa(beneficiosVM, navController, perfil = perfil) }
+                        composable(Pantalla.RUTA_MENU) { Menu(navController, perfil = perfil) }
+                        composable(Pantalla.RUTA_AVISOS) { Avisos(navController, beneficiosVM, perfil = perfil) }
                         composable(Pantalla.RUTA_PERFIL) { Perfil(navController, beneficiosVM) }
                         composable(Pantalla.RUTA_LOGIN_NEGOCIOS) {
                             LoginNegocios(beneficiosVM, navController)
