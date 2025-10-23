@@ -218,7 +218,7 @@ fun SolicitaTuTarjeta() {
     val context = LocalContext.current
 
     Text(
-        text = "¿Aún no tienes tu tarjeta? Solicítala aquí",
+        text = "¿Aún no tienes tu tarjeta?",
         color = Color.Blue,
         modifier = Modifier.clickable {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://beneficiojoven.com/#solicita"))
