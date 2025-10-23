@@ -1,5 +1,6 @@
 package mx.apb.beneficios_juventud.view
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +29,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import android.net.Uri
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +58,18 @@ fun Login(
     modifier: Modifier = Modifier
 ) {
     val estado by beneficiosVM.estado.collectAsState()
+    val context = LocalContext.current
+
+    // --- Aviso de privacidad ---
+    var mostrarAviso by rememberSaveable { mutableStateOf(false) }
+    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+
+    LaunchedEffect(Unit) {
+        val yaMostrado = prefs.getBoolean("aviso_privacidad_mostrado", false)
+        if (!yaMostrado) {
+            mostrarAviso = true
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -109,9 +126,37 @@ fun Login(
                 AccesoNegocio(navController)
 
                 Spacer(modifier = Modifier.height(30.dp))
-                SolicitaTuTarjeta()
             }
         }
+    }
+// --- Diálogo de Aviso de Privacidad ---
+    if (mostrarAviso) {
+        AlertDialog(
+            onDismissRequest = { /* Evita cerrar tocando fuera para forzar lectura */ },
+            title = { Text("Aviso de Privacidad") },
+            text = {
+                Text(
+                    "Tus datos personales serán tratados conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares. " +
+                            "Al continuar, aceptas el tratamiento para fines de autenticación y prestación del servicio. " +
+                            "Puedes consultar el aviso completo en el enlace."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        prefs.edit().putBoolean("aviso_privacidad_mostrado", true).apply()
+                        mostrarAviso = false
+                    }
+                ) { Text("Aceptar") }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        abrirEnlace(context, "https://beneficiojoven.com/privacidad")
+                    }
+                ) { Text("Ver completo") }
+            }
+        )
     }
 }
 
@@ -213,16 +258,9 @@ fun AccesoNegocio(navController: NavHostController) {
     )
 }
 
-@Composable
-fun SolicitaTuTarjeta() {
-    val context = LocalContext.current
 
-    Text(
-        text = "¿Aún no tienes tu tarjeta?",
-        color = Color.Blue,
-        modifier = Modifier.clickable {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://beneficiojoven.com/#solicita"))
-            context.startActivity(intent)
-        }
-    )
+
+private fun abrirEnlace(context: Context, url: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    context.startActivity(intent)
 }
