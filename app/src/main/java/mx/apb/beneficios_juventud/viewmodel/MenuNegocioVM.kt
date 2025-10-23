@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.model.API.ClienteApi
+import mx.apb.beneficios_juventud.model.API.request.AgrgarOfertaRequest
 import mx.apb.beneficios_juventud.model.BeneficiosJuventud
 import mx.apb.beneficios_juventud.model.OfertaNegocio
 
@@ -62,6 +63,32 @@ class NegocioVM() : ViewModel(){
                 _estado.value = _estado.value.copy(
                     loading = false,
                     error = "No se pudieron cargar las ofertas. Revisa tu conexión."
+                )
+            }
+        }
+    }
+
+    fun agregarOferta(request: AgrgarOfertaRequest) {
+        viewModelScope.launch {
+            _estado.value = _estado.value.copy(loading = true)
+            try {
+                val response = ClienteApi.service.publicarOferta(request)
+                if (response.success) {
+                    Log.d("NegocioVM", "Oferta agregada con éxito: ${response.message}")
+                    obtenerOfertas()
+                } else {
+                    val errorMessage = response.message ?: "La API devolvió un error al agregar la oferta."
+                    Log.e("NegocioVM", "Error al agregar oferta: $errorMessage")
+                    _estado.value = _estado.value.copy(
+                        loading = false,
+                        error = errorMessage
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("NegocioVM", "Excepción al agregar oferta: ${e.message}", e)
+                _estado.value = _estado.value.copy(
+                    loading = false,
+                    error = "No se pudo agregar la oferta. Revisa tu conexión."
                 )
             }
         }

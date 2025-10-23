@@ -1,7 +1,9 @@
 package mx.apb.beneficios_juventud.model.API
 
+import mx.apb.beneficios_juventud.model.API.request.AgrgarOfertaRequest
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.request.ScannerRequest
+import mx.apb.beneficios_juventud.model.API.response.AgregarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
 import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
@@ -69,8 +71,8 @@ interface ServicioApi {
     @GET("mobile/promociones-establecimiento-dueno")
     suspend fun ofertasNegocio(@Query ("idDueno") idDueno: Int?): OfertasNegocioResponse
 
-    @POST
-    suspend fun publicarOferta()
+    @POST("mobile/crear-nueva-promocion")
+    suspend fun publicarOferta(@Body request: AgrgarOfertaRequest): AgregarOfertaResponse
 
     @GET("mobile/promociones-establecimiento")
     suspend fun promocionesPorEstablecimiento(

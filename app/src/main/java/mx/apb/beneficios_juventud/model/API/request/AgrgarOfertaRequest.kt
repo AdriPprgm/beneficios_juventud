@@ -1,7 +1,11 @@
 package mx.apb.beneficios_juventud.model.API.request
 
+
 data class AgrgarOfertaRequest (
-    val Titulo: String,
-    val Descripcion: String,
-    val fotoUrl: String,
+    val titulo: String,
+    val descripcion: String,
+    val discountType: String,
+    val discountValue: Double,
+    val validFrom: String,
+    val validTo: String
 )
