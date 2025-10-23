@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mx.apb.beneficios_juventud.model.BeneficiosJuventud
@@ -33,6 +35,13 @@ import mx.apb.beneficios_juventud.model.Sucursal
 class BeneficiosVM(application: Application) : AndroidViewModel(application) {
 
     private val managerSesion = ManagerSesion(application)
+
+    val authToken: StateFlow<String?> =
+        managerSesion.authToken.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
 
     /** Modelo que simula o contiene datos del usuario. */
     private val modelo = BeneficiosJuventud()

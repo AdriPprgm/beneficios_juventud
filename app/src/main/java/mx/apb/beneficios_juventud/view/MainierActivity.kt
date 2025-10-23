@@ -171,6 +171,14 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                             CatalogoNegocio(navController = navController, idEstablecimiento = id, beneficiosVM = beneficiosVM)
                         }
 
+                        composable(
+                            route = "qr/{idPromocion}",
+                            arguments = listOf(navArgument("idPromocion"){ type = NavType.IntType }) // ✅ Int
+                        ) { backStackEntry ->
+                            val idInt = backStackEntry.arguments!!.getInt("idPromocion")
+                            PromoQr(idPromocion = idInt.toLong(), beneficiosVM = beneficiosVM)
+                        }
+
                         composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController, beneficiosVM) }
                         composable(Pantalla.RUTA_SCANNER_NEGOCIOS) { ScannerNegocios(navController) }
                         composable(Pantalla.RUTA_REGISTROS_NEGOCIOS) { RegistrosNegocios(navController) }

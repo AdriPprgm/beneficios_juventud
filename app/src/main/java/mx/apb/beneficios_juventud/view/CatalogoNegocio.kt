@@ -112,7 +112,7 @@ fun CatalogoNegocio(
                     // Banner e información inicial (similar al prototipo)
                     item {
                         BannerNegocio(
-                            bannerUrl = headerLogo, // usamos logo grande como banner; si tienes un banner real, cámbialo aquí
+                            bannerUrl = headerLogo, // usamos logo grande como banner
                             contentDescription = headerNombre
                         )
 
@@ -133,7 +133,8 @@ fun CatalogoNegocio(
                     items(promosState.items) { promo ->
                         PromoCardNetwork(
                             promo = promo,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            onClick = { p -> navController.navigate("qr/${p.id}") }
                         )
                     }
                 }
@@ -209,13 +210,16 @@ private fun BannerNegocio(
 @Composable
 private fun PromoCardNetwork(
     promo: Promo,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (Promo) -> Unit
+
 ) {
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color.White)
+        colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+        onClick = { onClick(promo) }
     ) {
         Row(
             modifier = Modifier
@@ -223,17 +227,6 @@ private fun PromoCardNetwork(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Imagen de la promo (si no hay, queda vacío sin crashear)
-            AsyncImage(
-                model = promo.imagenUrl,
-                contentDescription = promo.titulo,
-                modifier = Modifier
-                    .size(84.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Row(

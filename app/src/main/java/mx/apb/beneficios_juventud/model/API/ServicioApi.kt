@@ -8,12 +8,14 @@ import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
 import mx.apb.beneficios_juventud.model.API.response.PageResponse
 import mx.apb.beneficios_juventud.model.API.response.PerfilResponse
 import mx.apb.beneficios_juventud.model.API.response.PromocionNetwork
+import mx.apb.beneficios_juventud.model.API.response.QrResponse
 import mx.apb.beneficios_juventud.model.API.response.ScannerResponse
 import mx.apb.beneficios_juventud.model.API.response.SucursalesResponse
 import mx.apb.beneficios_juventud.model.API.response.UbicacionResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -75,5 +77,11 @@ interface ServicioApi {
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 20
     ): PageResponse<PromocionNetwork>
+
+    @POST("mobile/generar-qr/{idPromocion}")
+    suspend fun generarQr(
+        @Path("idPromocion") idPromocion: Long,
+        @Header("Authorization") bearer: String, // "Bearer <token>"
+    ): QrResponse
 
 }
