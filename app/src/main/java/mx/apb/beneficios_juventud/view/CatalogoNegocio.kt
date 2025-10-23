@@ -1,6 +1,7 @@
 package mx.apb.beneficios_juventud.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +26,10 @@ import coil.compose.AsyncImage
 import mx.apb.beneficios_juventud.model.API.ClienteApi
 import mx.apb.beneficios_juventud.viewmodel.DetalleEstablecimientoVM
 import androidx.lifecycle.viewmodel.compose.viewModel
+import mx.apb.beneficios_juventud.model.PerfilUsuario
 import mx.apb.beneficios_juventud.model.Promo
+import mx.apb.beneficios_juventud.viewmodel.BeneficiosVM
+import mx.apb.beneficios_juventud.viewmodel.MenuVM
 
 // Estilos para la insignia de descuento
 private val PurpleBadge = Color(0xFF7C4DFF)
@@ -33,7 +38,8 @@ private val BadgeTextColor = Color.White
 @Composable
 fun CatalogoNegocio(
     navController: NavHostController,
-    idEstablecimiento: Int? = null
+    idEstablecimiento: Int? = null,
+    beneficiosVM: BeneficiosVM
 ) {
     val vm: DetalleEstablecimientoVM = viewModel(
         factory = DetalleEstablecimientoVM.factory(ClienteApi.service)
@@ -54,9 +60,12 @@ fun CatalogoNegocio(
     Scaffold(
         containerColor = Color.White,
         topBar = {
+            val perfil by beneficiosVM.perfil.collectAsState()
             TopBarNegocio(
                 title = headerNombre,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                navController = navController,
+                perfil = perfil
             )
         }
     ) { padding ->
@@ -137,7 +146,9 @@ fun CatalogoNegocio(
 @Composable
 private fun TopBarNegocio(
     title: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    navController: NavHostController,
+    vm: MenuVM = viewModel(), perfil: PerfilUsuario?
 ) {
     TopAppBar(
         title = {
@@ -154,14 +165,24 @@ private fun TopBarNegocio(
             }
         },
         actions = {
-            // Avatar/placeholder
             Box(
                 modifier = Modifier
-                    .padding(end = 12.dp)
-                    .size(28.dp)
+                    .padding(end = 2.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFE0E0E0))
-            )
+                    .background(MaterialTheme.colorScheme.primary)
+                    .clickable {
+                        navController.navigate(Pantalla.RUTA_PERFIL)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = perfil?.name?.firstOrNull()?.uppercase() ?: "U",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     )
 }

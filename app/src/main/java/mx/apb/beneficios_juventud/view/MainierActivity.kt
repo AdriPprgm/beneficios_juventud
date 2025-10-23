@@ -161,14 +161,14 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                         composable(Pantalla.RUTA_LOGIN_NEGOCIOS) {
                             LoginNegocios(beneficiosVM, navController)
                         }
-                        composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController) }
+                        composable(Pantalla.RUTA_CATALOGO) { CatalogoNegocio(navController = navController, beneficiosVM = beneficiosVM) }
 
                         composable(
                             route = "${Pantalla.RUTA_CATALOGO}/{id}",
                             arguments = listOf(navArgument("id") { type = NavType.IntType })
                         ) { backStackEntry ->
                             val id = backStackEntry.arguments?.getInt("id") ?: -1
-                            CatalogoNegocio(navController, idEstablecimiento = id)
+                            CatalogoNegocio(navController = navController, idEstablecimiento = id, beneficiosVM = beneficiosVM)
                         }
 
                         composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController, beneficiosVM) }
