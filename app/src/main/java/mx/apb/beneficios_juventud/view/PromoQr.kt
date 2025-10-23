@@ -6,6 +6,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import mx.apb.beneficios_juventud.model.API.ClienteApi
@@ -32,7 +35,8 @@ import mx.apb.beneficios_juventud.viewmodel.PromoQrVM.Companion.factoryQr
 @Composable
 fun PromoQr(
     idPromocion: Long,
-    beneficiosVM: BeneficiosVM
+    beneficiosVM: BeneficiosVM,
+    navController: NavHostController
 ) {
     val token by beneficiosVM.authToken.collectAsState()
     val vm: PromoQrVM = viewModel(
@@ -50,7 +54,12 @@ fun PromoQr(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Código QR de promoción") })
+            TopAppBar(title = { Text("Código QR de promoción") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Regresar")
+                    }
+                })
         }
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {

@@ -32,7 +32,20 @@ import mx.apb.beneficios_juventud.model.Sucursal
  * Maneja el estado de la sesión de usuario, credenciales, login/logout y datos relacionados
  * con la interfaz de usuario, incluyendo solicitudes para el mapa y almacenamiento temporal.
  */
+
+sealed class ForgotUiState {
+    data object Idle : ForgotUiState()
+    data object Loading : ForgotUiState()
+    data class Success(val msg: String) : ForgotUiState()
+    data class Error(val msg: String) : ForgotUiState()
+}
+
 class BeneficiosVM(application: Application) : AndroidViewModel(application) {
+
+    // Estado de "olvidé mi contraseña"
+    private val _forgotState = MutableStateFlow<ForgotUiState>(ForgotUiState.Idle)
+    val forgotState: StateFlow<ForgotUiState> = _forgotState
+
 
     private val managerSesion = ManagerSesion(application)
 
@@ -58,6 +71,37 @@ class BeneficiosVM(application: Application) : AndroidViewModel(application) {
             handleSessExpired()
         }
     }
+
+    fun enviarCorreoReset(email: String) {
+        val emailTrim = email.trim()
+        if (!emailValido(emailTrim)) {
+            _forgotState.value = ForgotUiState.Error("Correo inválido")
+            return
+        }
+
+        viewModelScope.launch {
+            _forgotState.value = ForgotUiState.Loading
+            try {
+                val res = ClienteApi.service.forgotPasswordEmail(
+                    mx.apb.beneficios_juventud.model.API.request.ForgotRequest(emailTrim)
+                )
+                // El backend responde mensaje genérico, úsalo si viene; si no, fallback
+                val msg = res.message ?: "Si el correo existe, te enviaremos un enlace para restablecer tu contraseña."
+                _forgotState.value = ForgotUiState.Success(msg)
+            } catch (e: Exception) {
+                Log.e("FORGOT_API", "Error: ${e.message}", e)
+                _forgotState.value = ForgotUiState.Error("No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.")
+            }
+        }
+    }
+
+    fun resetForgotState() { _forgotState.value = ForgotUiState.Idle }
+
+    private fun emailValido(s: String): Boolean {
+        // Validador simple; si prefieres: Patterns.EMAIL_ADDRESS.matcher(s).matches()
+        return s.isNotBlank() && "@" in s && "." in s
+    }
+
 
     private fun handleSessExpired(){
         viewModelScope.launch {

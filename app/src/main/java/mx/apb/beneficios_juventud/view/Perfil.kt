@@ -203,14 +203,6 @@ private fun PerfilContent(
         }
 
         item {
-            Spacer(Modifier.height(8.dp))
-            Button(
-                onClick = onShowDigitalCard,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = MaterialTheme.shapes.extraLarge
-            ) { Text("Tarjeta digital") }
 
             Spacer(Modifier.height(8.dp))
             Button(

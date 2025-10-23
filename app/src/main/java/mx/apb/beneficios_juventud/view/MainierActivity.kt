@@ -176,7 +176,7 @@ fun MainScreen(beneficiosVM: BeneficiosVM) {
                             arguments = listOf(navArgument("idPromocion"){ type = NavType.IntType }) // ✅ Int
                         ) { backStackEntry ->
                             val idInt = backStackEntry.arguments!!.getInt("idPromocion")
-                            PromoQr(idPromocion = idInt.toLong(), beneficiosVM = beneficiosVM)
+                            PromoQr(idPromocion = idInt.toLong(), beneficiosVM = beneficiosVM, navController)
                         }
 
                         composable(Pantalla.RUTA_MENU_NEGOCIOS) { MenuNegocios(navController, beneficiosVM) }

@@ -68,21 +68,6 @@ fun Avisos(navController: NavHostController, beneficiosVM: BeneficiosVM, vm: Men
             items(notificaciones.size) { idx ->
                 NotificationCard(notificacion = notificaciones[idx])
             }
-            item {
-                Spacer(Modifier.height(24.dp))
-                Button(
-                    onClick = {
-                        ClienteApi.actualizarToken(null)
-                        beneficiosVM.signOut()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = MaterialTheme.shapes.extraLarge
-                ) {
-                    Text("Cerrar sesión")
-                }
-            }
         }
     }
 }

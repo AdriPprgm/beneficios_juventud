@@ -10,6 +10,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
@@ -18,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.style.TextAlign
 import coil.compose.AsyncImage
+import mx.apb.beneficios_juventud.viewmodel.ForgotUiState
 
 /**
  * Pantalla genérica para "Olvidaste tu contraseña"
@@ -28,6 +31,8 @@ import coil.compose.AsyncImage
 fun Olvidaste(beneficiosVM: BeneficiosVM, navController: NavController, modifier: Modifier = Modifier)
 {
     val email = remember { mutableStateOf(TextFieldValue("")) }
+    val forgotState by beneficiosVM.forgotState.collectAsState()
+
 
     Box(
         modifier = Modifier
@@ -79,12 +84,25 @@ fun Olvidaste(beneficiosVM: BeneficiosVM, navController: NavController, modifier
 
             // Botón de enviar instrucciones
             Button(
-                onClick = { /* Sin acción aún */ },
+                onClick = { beneficiosVM.enviarCorreoReset(email.value.text) },
+                enabled = forgotState !is ForgotUiState.Loading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
             ) {
                 Text("Enviar instrucciones")
+            }
+
+            when (val st = forgotState) {
+                is ForgotUiState.Success -> Text(
+                    text = st.msg,
+                    color = Color(0xFF2E7D32)
+                )
+                is ForgotUiState.Error -> Text(
+                    text = st.msg,
+                    color = MaterialTheme.colorScheme.error
+                )
+                else -> {}
             }
 
             Spacer(modifier = Modifier.height(12.dp))

@@ -1,12 +1,14 @@
 package mx.apb.beneficios_juventud.model.API
 
 import mx.apb.beneficios_juventud.model.API.request.AgrgarOfertaRequest
+import mx.apb.beneficios_juventud.model.API.request.ForgotRequest
 import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.request.ScannerRequest
 import mx.apb.beneficios_juventud.model.API.response.AgregarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
 import mx.apb.beneficios_juventud.model.API.response.EliminarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.FolioResponse
+import mx.apb.beneficios_juventud.model.API.response.ForgotResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
 import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
 import mx.apb.beneficios_juventud.model.API.response.PageResponse
@@ -33,6 +35,7 @@ data class EstablecimientoItem(
     val categorias: List<String>
 )
 data class PagedResponse<T>(val success:Boolean, val data: List<T>?, val meta: Meta?)
+
 /**
  * Definición de endpoints del backend de Beneficios Juventud.
  */
@@ -101,5 +104,8 @@ interface ServicioApi {
         @Path("idPromocion") idPromocion: Long,
         @Header("Authorization") bearer: String, // "Bearer <token>"
     ): QrResponse
+
+    @POST("auth/forgot-password-email")
+    suspend fun forgotPasswordEmail(@Body req: ForgotRequest): ForgotResponse
 
 }
