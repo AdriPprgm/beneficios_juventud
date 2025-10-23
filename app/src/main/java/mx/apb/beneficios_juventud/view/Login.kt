@@ -1,5 +1,6 @@
 package mx.apb.beneficios_juventud.view
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,8 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import android.net.Uri
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -104,6 +107,9 @@ fun Login(
                 Spacer(modifier = Modifier.height(30.dp))
 
                 AccesoNegocio(navController)
+
+                Spacer(modifier = Modifier.height(30.dp))
+                SolicitaTuTarjeta()
             }
         }
     }
@@ -203,6 +209,20 @@ fun AccesoNegocio(navController: NavHostController) {
         color = Color.Blue,
         modifier = Modifier.clickable {
             navController.navigate(Pantalla.RUTA_LOGIN_NEGOCIOS)
+        }
+    )
+}
+
+@Composable
+fun SolicitaTuTarjeta() {
+    val context = LocalContext.current
+
+    Text(
+        text = "¿Aún no tienes tu tarjeta? Solicítala aquí",
+        color = Color.Blue,
+        modifier = Modifier.clickable {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://beneficiojoven.com/#solicita"))
+            context.startActivity(intent)
         }
     )
 }
