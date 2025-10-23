@@ -3,6 +3,7 @@ package mx.apb.beneficios_juventud.view
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -62,6 +63,7 @@ fun MenuNegocios(
 
     // 🔹 Estado para saber en qué pantalla estás
     val currentRoute = remember { mutableStateOf(Pantalla.RUTA_MENU_NEGOCIOS) }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         val ownerId = beneficiosVM.obtenerId()
@@ -115,6 +117,11 @@ fun MenuNegocios(
             onSave = { request: AgrgarOfertaRequest ->
                 negocioVM.agregarOferta(request)
                 Log.d("MenuNegocios", "Nueva oferta guardada: $request")
+                Toast.makeText(
+                    context,
+                    "Oferta esperando aprobación. Esto puede tardar algunos minutos.",
+                    Toast.LENGTH_LONG
+                ).show()
                 mostrarDialogo = false
             }
         )
