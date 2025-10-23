@@ -3,6 +3,7 @@ package mx.apb.beneficios_juventud.view
 import ScannerView
 import android.Manifest
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -120,6 +121,7 @@ fun ScannerNegocios(navController: NavController,
                             scannerVM.Scaneo() // Esto imprimirá ✅ o ⚠️ según el response
                         }
 
+                        Toast.makeText(context, "Descuento aplicado correctamente", Toast.LENGTH_LONG).show()
                         navController.navigate(Pantalla.RUTA_REGISTROS_NEGOCIOS)
                         navegacionRealizada = true
 
