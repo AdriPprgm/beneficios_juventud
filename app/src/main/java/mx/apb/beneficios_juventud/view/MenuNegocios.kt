@@ -99,8 +99,7 @@ fun MenuNegocios(
                 OfertaNegocioCard(
                     oferta = oferta,
                     onDelete = {
-                        // TODO: Implementar la llamada al ViewModel para eliminar la oferta en el backend
-                        // negocioVM.eliminarOferta(it)
+                        negocioVM.eliminarOferta(it.id)
                     },
                     onClick = {
                         navController.navigate(Pantalla.RUTA_OFERTA_POR_FOLIO)

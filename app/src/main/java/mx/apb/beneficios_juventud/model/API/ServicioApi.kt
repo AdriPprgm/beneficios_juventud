@@ -5,6 +5,7 @@ import mx.apb.beneficios_juventud.model.API.request.LoginRequest
 import mx.apb.beneficios_juventud.model.API.request.ScannerRequest
 import mx.apb.beneficios_juventud.model.API.response.AgregarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.CategoriasResponse
+import mx.apb.beneficios_juventud.model.API.response.EliminarOfertaResponse
 import mx.apb.beneficios_juventud.model.API.response.FolioResponse
 import mx.apb.beneficios_juventud.model.API.response.LoginResponse
 import mx.apb.beneficios_juventud.model.API.response.OfertasNegocioResponse
@@ -86,6 +87,8 @@ interface ServicioApi {
     @POST("mobile/crear-nueva-promocion")
     suspend fun publicarOferta(@Body request: AgrgarOfertaRequest): AgregarOfertaResponse
 
+    @POST("mobile/desactivar-promocion/{idPromocion}")
+    suspend fun eliminarOferta(@Path("idPromocion") idPromocion: Int): EliminarOfertaResponse
     @GET("mobile/promociones-establecimiento")
     suspend fun promocionesPorEstablecimiento(
         @Query("idEstablecimiento") idEstablecimiento: Int,

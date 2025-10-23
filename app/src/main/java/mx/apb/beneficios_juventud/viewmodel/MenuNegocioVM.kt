@@ -93,4 +93,26 @@ class NegocioVM() : ViewModel(){
             }
         }
     }
+
+    fun eliminarOferta(idOferta: Int) {
+        viewModelScope.launch {
+            _estado.value = _estado.value.copy(loading = true)
+            try {
+                val response = ClienteApi.service.eliminarOferta(idOferta)
+                if (response.success) {
+                    Log.d("NegocioVM", "Oferta eliminada con éxito: ${response.message}")
+                    obtenerOfertas()
+                } else {
+                    val errorMessage = response.message ?: "La API devolvió un error al eliminar la oferta."
+                    Log.e("NegocioVM", "Error al eliminar oferta: $errorMessage")
+                    _estado.value = _estado.value.copy(
+                        loading = false,
+                        error = errorMessage
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("NegocioVM", "Excepción al eliminar oferta: ${e.message}", e)
+            }
+        }
+    }
 }
